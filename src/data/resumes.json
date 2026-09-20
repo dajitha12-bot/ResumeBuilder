@@ -1,0 +1,88 @@
+[
+  {
+    "id": "resume_001",
+    "userId": "user_001",
+    "title": "Java Developer Resume",
+    "targetRole": "Java Spring Boot Developer",
+    "template": "modern",
+    "personalInfo": {
+      "fullName": "Ajitha D R",
+      "email": "ajitha@example.com",
+      "phone": "+91 9876543210",
+      "location": "Kovilpatti, Tamil Nadu, India",
+      "linkedin": "https://linkedin.com/in/ajitha-dr",
+      "github": "https://github.com/ajithadr",
+      "portfolio": "https://ajithadr.dev"
+    },
+    "summary": "Detail-oriented III Year Information Technology student with hands-on experience in Java, Spring Boot, REST APIs, and SQL database management. Proven ability to build scalable web applications through academic projects and a full-stack internship. Eager to contribute clean code and software development solutions to a dynamic engineering team.",
+    "education": [
+      {
+        "id": "edu_1",
+        "degree": "B.Tech in Information Technology",
+        "institution": "National Engineering College",
+        "year": "2022 - 2026",
+        "cgpa": "8.75 CGPA"
+      }
+    ],
+    "skills": {
+      "languages": ["Java", "Python", "C", "C++", "JavaScript"],
+      "frameworks": ["Spring Boot", "React", "HTML/CSS"],
+      "databases": ["MySQL", "MongoDB"],
+      "tools": ["Git", "Postman", "Cisco Packet Tracer", "VS Code"],
+      "softSkills": ["Problem Solving", "Technical Communication", "Team Collaboration"]
+    },
+    "projects": [
+      {
+        "id": "proj_1",
+        "name": "Smart University Event Management",
+        "role": "Lead Backend Developer",
+        "technologies": ["Java", "Spring Boot", "MySQL", "REST API"],
+        "link": "https://github.com/ajithadr/smart-university-events",
+        "description": "Architected a responsive event booking platform with Spring Boot backend services, enabling automated seat allocation and calendar scheduling for university events."
+      },
+      {
+        "id": "proj_2",
+        "name": "Smart Transit Pass Portal",
+        "role": "Full Stack Developer",
+        "technologies": ["React", "Spring Boot", "SQL", "QR SDK"],
+        "link": "https://github.com/ajithadr/smart-transit-pass",
+        "description": "Developed a digital transit pass portal featuring secure QR-based pass verification for daily commuters, streamlining verification time."
+      }
+    ],
+    "experience": [
+      {
+        "id": "exp_1",
+        "organization": "Cognizant Technology Solutions",
+        "role": "Full Stack Java Intern",
+        "duration": "May 2026 - July 2026",
+        "technologies": ["Java", "Spring Boot", "MySQL", "JUnit", "Git"],
+        "description": "Engineered RESTful microservices for module data integration and wrote JUnit test cases improving overall code coverage."
+      }
+    ],
+    "certifications": [
+      {
+        "id": "cert_1",
+        "name": "MongoDB Basics",
+        "organization": "MongoDB University",
+        "date": "Jan 2026",
+        "link": "https://university.mongodb.com/verify"
+      },
+      {
+        "id": "cert_2",
+        "name": "NPTEL Technical English",
+        "organization": "NPTEL / IIT Madras",
+        "date": "Apr 2025",
+        "link": "https://nptel.ac.in/noc"
+      }
+    ],
+    "achievements": [
+      {
+        "id": "ach_1",
+        "title": "Hackathon Finalist",
+        "description": "Secured Top 5 position in College CodeSprint for Smart Transit Pass Portal solution."
+      }
+    ],
+    "createdAt": "2026-09-20",
+    "updatedAt": "2026-09-20"
+  }
+]

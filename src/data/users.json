@@ -1,0 +1,17 @@
+[
+  {
+    "id": "user_001",
+    "name": "Ajitha D R",
+    "email": "ajitha@example.com",
+    "phone": "+91 9876543210",
+    "location": "Kovilpatti, Tamil Nadu, India",
+    "linkedin": "https://linkedin.com/in/ajitha-dr",
+    "github": "https://github.com/ajithadr",
+    "portfolio": "https://ajithadr.dev",
+    "college": "National Engineering College",
+    "degree": "B.Tech - Information Technology",
+    "year": "III Year (2022 - 2026)",
+    "cgpa": "8.75",
+    "createdAt": "2026-09-20"
+  }
+]

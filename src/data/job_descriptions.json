@@ -1,0 +1,10 @@
+[
+  {
+    "id": "job_001",
+    "userId": "user_001",
+    "title": "Junior Java Developer",
+    "company": "TechSolutions Inc.",
+    "rawText": "Role: Junior Java Developer\n\nRequired Skills:\n- Java 17+\n- Spring Boot\n- REST APIs\n- MySQL / SQL databases\n\nPreferred Skills:\n- Docker\n- AWS (S3, EC2)\n- Git & GitHub\n- React basic knowledge\n\nExperience: 0-2 years\nEducation: Bachelor's in CS / IT / related field\n\nResponsibilities:\n- Build microservices using Java & Spring Boot\n- Design relational database schemas\n- Integrate frontend React components with backend REST APIs",
+    "createdAt": "2026-09-20"
+  }
+]
