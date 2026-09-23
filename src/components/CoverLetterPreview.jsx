@@ -48,6 +48,152 @@ export default function CoverLetterPreview({ data, template = 'desert_rock' }) {
     </div>
   );
 
+  // TEMPLATE: DARK LEAVES (Foliage background border)
+  if (template === 'dark_leaves') {
+    return (
+      <div id="cover-letter-preview" className="w-full max-w-[800px] min-h-[1050px] shadow-lg p-8 font-sans bg-[#1c3328] relative overflow-hidden flex items-center justify-center text-left">
+        <div className="absolute inset-0 opacity-25 pointer-events-none bg-[radial-gradient(#10b981_1px,transparent_1px)] [background-size:16px_16px]" />
+        <div className="bg-white text-gray-800 w-full h-full p-10 rounded shadow-2xl border-2 border-[#2b4c3f] relative z-10 flex flex-col justify-between">
+          <div>
+            <div className="border-b border-[#2b4c3f]/30 pb-4 mb-6 flex justify-between items-center">
+              <div>
+                <h1 className="text-2xl font-extrabold text-[#1c3328] tracking-wide">{sender.fullName}</h1>
+                <p className="text-xs font-bold text-[#2b4c3f] uppercase tracking-widest mt-0.5">{sender.jobTitle}</p>
+                <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500 mt-2">
+                  {sender.email && <span>{sender.email}</span>}
+                  {sender.phone && <span>• {sender.phone}</span>}
+                  {sender.location && <span>• {sender.location}</span>}
+                </div>
+              </div>
+              {renderPhotoFrame("w-20 h-20", "rounded-full", "border-2 border-[#2b4c3f]")}
+            </div>
+            <div className="flex justify-between items-start mb-6 text-xs text-gray-600">
+              <div>
+                {recipient.hiringManager && <p className="font-bold text-gray-900">{recipient.hiringManager}</p>}
+                {recipient.company && <p className="font-semibold text-gray-700">{recipient.company}</p>}
+                {recipient.address && <p className="whitespace-pre-line text-gray-500">{recipient.address}</p>}
+              </div>
+              {recipient.date && <p className="font-semibold text-[#2b4c3f]">{recipient.date}</p>}
+            </div>
+            <p className="font-bold text-gray-900 mb-4">{salutation}</p>
+            {renderLetterBody()}
+          </div>
+          <div className="mt-8">
+            <p className="text-sm font-semibold text-gray-700">{signoff}</p>
+            <p className="text-base font-bold text-[#1c3328] mt-3">{signature || sender.fullName}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // TEMPLATE: LARA MILLER (Plum Purple Header Banner)
+  if (template === 'lara_miller') {
+    return (
+      <div id="cover-letter-preview" className="bg-white text-gray-800 w-full max-w-[800px] min-h-[1050px] shadow-lg flex flex-col justify-between font-sans text-left border border-gray-200">
+        <div>
+          <div className="bg-[#84566d] text-white p-10 flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-extrabold tracking-tight text-white">{sender.fullName}</h1>
+              <p className="text-xs font-semibold text-purple-200 mt-1 uppercase tracking-widest">{sender.jobTitle}</p>
+              <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-purple-100 mt-4 opacity-90">
+                {sender.email && <span>✉ {sender.email}</span>}
+                {sender.phone && <span>📞 {sender.phone}</span>}
+                {sender.location && <span>📍 {sender.location}</span>}
+              </div>
+            </div>
+            {renderPhotoFrame("w-24 h-24", "rounded-2xl", "border-2 border-white/80")}
+          </div>
+          <div className="p-10">
+            <div className="flex justify-between items-start mb-6 text-xs text-gray-600 border-b pb-4">
+              <div>
+                {recipient.hiringManager && <p className="font-bold text-gray-900">{recipient.hiringManager}</p>}
+                {recipient.company && <p className="font-semibold text-gray-700">{recipient.company}</p>}
+                {recipient.address && <p className="whitespace-pre-line text-gray-500">{recipient.address}</p>}
+              </div>
+              {recipient.date && <p className="font-semibold text-[#84566d]">{recipient.date}</p>}
+            </div>
+            <p className="font-bold text-gray-900 mb-4">{salutation}</p>
+            {renderLetterBody()}
+          </div>
+        </div>
+        <div className="p-10 pt-0">
+          <p className="text-sm font-semibold text-gray-700">{signoff}</p>
+          <p className="text-base font-bold text-[#84566d] mt-3">{signature || sender.fullName}</p>
+        </div>
+      </div>
+    );
+  }
+
+  // TEMPLATE: ANNA FIELD (Mint Teal Header Accent)
+  if (template === 'anna_field') {
+    return (
+      <div id="cover-letter-preview" className="bg-white text-gray-800 w-full max-w-[800px] min-h-[1050px] shadow-lg p-10 font-sans flex flex-col justify-between text-left border border-teal-100">
+        <div>
+          <div className="bg-[#e8f5e9]/80 p-6 rounded-2xl border border-[#c8e6c9] mb-6 flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-extrabold text-[#1b5e20]">{sender.fullName}</h1>
+              <p className="text-sm font-semibold text-[#2e7d32] mt-1">{sender.jobTitle}</p>
+              <div className="flex flex-wrap gap-3 text-xs text-gray-600 mt-3">
+                {sender.email && <span>✉ {sender.email}</span>}
+                {sender.phone && <span>• 📞 {sender.phone}</span>}
+                {sender.location && <span>• 📍 {sender.location}</span>}
+              </div>
+            </div>
+            {renderPhotoFrame("w-20 h-20", "rounded-xl", "border-2 border-[#2e7d32]")}
+          </div>
+          <div className="flex justify-between items-start mb-6 text-xs text-gray-600">
+            <div>
+              {recipient.hiringManager && <p className="font-bold text-gray-900">{recipient.hiringManager}</p>}
+              {recipient.company && <p className="font-semibold text-gray-700">{recipient.company}</p>}
+              {recipient.address && <p className="whitespace-pre-line text-gray-500">{recipient.address}</p>}
+            </div>
+            {recipient.date && <p className="font-semibold text-[#2e7d32]">{recipient.date}</p>}
+          </div>
+          <p className="font-bold text-gray-900 mb-4">{salutation}</p>
+          {renderLetterBody()}
+        </div>
+        <div className="mt-8">
+          <p className="text-sm font-semibold text-gray-700">{signoff}</p>
+          <p className="text-base font-bold text-[#1b5e20] mt-3">{signature || sender.fullName}</p>
+        </div>
+      </div>
+    );
+  }
+
+  // TEMPLATE: ANDREW O'SULLIVAN (Serif Centered Classic)
+  if (template === 'andrew_osullivan') {
+    return (
+      <div id="cover-letter-preview" className="bg-white text-gray-800 w-full max-w-[800px] min-h-[1050px] shadow-lg p-10 font-serif flex flex-col justify-between text-left border border-gray-200">
+        <div>
+          <div className="text-center border-b border-gray-300 pb-6 mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 tracking-wide uppercase">{sender.fullName}</h1>
+            <p className="text-xs font-sans text-gray-500 uppercase tracking-widest mt-1">{sender.jobTitle}</p>
+            <div className="flex justify-center flex-wrap gap-4 text-xs font-sans text-gray-600 mt-3">
+              {sender.location && <span>📍 {sender.location}</span>}
+              {sender.email && <span>✉ {sender.email}</span>}
+              {sender.phone && <span>📞 {sender.phone}</span>}
+            </div>
+          </div>
+          <div className="flex justify-between items-start mb-6 text-xs font-sans text-gray-600">
+            <div>
+              {recipient.hiringManager && <p className="font-bold text-gray-900">{recipient.hiringManager}</p>}
+              {recipient.company && <p className="font-semibold text-gray-700">{recipient.company}</p>}
+              {recipient.address && <p className="whitespace-pre-line text-gray-500">{recipient.address}</p>}
+            </div>
+            {recipient.date && <p className="font-semibold text-gray-700">{recipient.date}</p>}
+          </div>
+          <p className="font-bold text-gray-900 mb-4 font-sans text-sm">{salutation}</p>
+          {renderLetterBody('text-gray-800 font-serif')}
+        </div>
+        <div className="mt-8 font-sans">
+          <p className="text-sm font-semibold text-gray-700">{signoff}</p>
+          <p className="text-base font-bold text-gray-900 mt-3 font-serif">{signature || sender.fullName}</p>
+        </div>
+      </div>
+    );
+  }
+
   // TEMPLATE 1: DESERT ROCK (Two-Column Layout)
   if (template === 'desert_rock') {
     return (

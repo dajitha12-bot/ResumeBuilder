@@ -12,6 +12,7 @@ import { Menu, Sparkles } from 'lucide-react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [templateType, setTemplateType] = useState('resumes');
   const [user, setUser] = useState(null);
   const [resume, setResume] = useState(null);
   const [vaultItems, setVaultItems] = useState([]);
@@ -20,6 +21,13 @@ export default function App() {
   const [truthStatus, setTruthStatus] = useState({ verified: true, truthScore: 100, findings: [] });
   const [mobileOpen, setMobileOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  const handleNavigate = (tab, subType) => {
+    setActiveTab(tab);
+    if (subType) {
+      setTemplateType(subType);
+    }
+  };
 
   useEffect(() => {
     async function loadData() {
@@ -99,7 +107,7 @@ export default function App() {
               vaultItems={vaultItems}
               versions={versions}
               truthReport={truthStatus}
-              onNavigate={setActiveTab}
+              onNavigate={handleNavigate}
             />
           )}
 
@@ -109,13 +117,13 @@ export default function App() {
               setResume={setResume}
               versions={versions}
               setVersions={setVersions}
-              onNavigate={setActiveTab}
+              onNavigate={handleNavigate}
             />
           )}
 
           {activeTab === 'cover-letters' && (
             <MyCoverLetters
-              onNavigate={setActiveTab}
+              onNavigate={handleNavigate}
               onEditLetter={(id) => setSelectedCoverLetterId(id)}
             />
           )}
@@ -123,7 +131,7 @@ export default function App() {
           {activeTab === 'cover-letter-builder' && (
             <CoverLetterBuilder
               letterId={selectedCoverLetterId}
-              onNavigate={setActiveTab}
+              onNavigate={handleNavigate}
             />
           )}
 
@@ -131,7 +139,8 @@ export default function App() {
             <TemplatesPage
               resume={resume}
               setResume={setResume}
-              onNavigate={setActiveTab}
+              onNavigate={handleNavigate}
+              initialType={templateType}
               onEditCoverLetter={(id) => setSelectedCoverLetterId(id)}
             />
           )}

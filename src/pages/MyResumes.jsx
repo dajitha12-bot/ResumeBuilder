@@ -79,7 +79,7 @@ export default function MyResumes({ resume, setResume, versions = [], setVersion
         
         {/* Dashed "+ New resume" Card */}
         <div
-          onClick={() => onNavigate && onNavigate('templates')}
+          onClick={() => onNavigate && onNavigate('templates', 'resumes')}
           className="border-2 border-dashed border-slate-300 hover:border-sky-500 rounded-2xl bg-white hover:bg-sky-50/30 transition-all cursor-pointer flex flex-col items-center justify-center min-h-[420px] p-6 text-slate-500 hover:text-sky-600 group shadow-sm hover:shadow-md"
         >
           <div className="w-14 h-14 rounded-full bg-slate-100 group-hover:bg-sky-100 flex items-center justify-center text-slate-400 group-hover:text-sky-600 transition mb-3">

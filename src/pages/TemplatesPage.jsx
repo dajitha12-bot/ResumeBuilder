@@ -57,16 +57,22 @@ const SAMPLE_COVER_LETTER = {
   signature: 'Brian T. Wayne'
 };
 
-export default function TemplatesPage({ resume, setResume, onNavigate, onEditCoverLetter }) {
-  const [activeType, setActiveType] = useState('cover_letters'); // default to Cover Letters gallery as requested
+export default function TemplatesPage({ resume, setResume, onNavigate, onEditCoverLetter, initialType = 'resumes' }) {
+  const [activeType, setActiveType] = useState(initialType);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedLetterTemplate, setSelectedLetterTemplate] = useState(null);
   const [newLetterName, setNewLetterName] = useState('');
 
+  React.useEffect(() => {
+    if (initialType) {
+      setActiveType(initialType);
+    }
+  }, [initialType]);
+
   const resumeTemplates = [
     { id: 'classic_serif', title: 'CLASSIC SERIF · BLUE UNDERLINE RESUME', category: 'Classic' },
-    { id: 'modern', title: 'MODERN · SINGLE-COLUMN BLUE ACCENT', category: 'Modern' },
-    { id: 'two_column', title: 'TWO-COLUMN · COMPACT SIDEBAR RESUME', category: 'Two-Column' },
+    { id: 'modern', title: 'MODERN PROFILE · SINGLE-COLUMN RESUME', category: 'Modern' },
+    { id: 'two_column', title: 'MODERN COLUMN · TWO-COLUMN RESUME', category: 'Two-Column' },
     { id: 'minimal', title: 'MINIMALIST · CLEAN WHITESPACE RESUME', category: 'Minimal' },
     { id: 'executive', title: 'EXECUTIVE · SENIOR NAVY ACCENT RESUME', category: 'Executive' },
     { id: 'fresher', title: 'FRESHER · STUDENT TIMELINE RESUME', category: 'Student' },
@@ -77,16 +83,16 @@ export default function TemplatesPage({ resume, setResume, onNavigate, onEditCov
   ];
 
   const coverLetterTemplates = [
+    { id: 'dark_leaves', title: 'DARK LEAVES · COVER LETTER WITH BORDER', category: 'Bordered' },
+    { id: 'lara_miller', title: 'LARA MILLER · PLUM PURPLE HEADER COVER LETTER', category: 'Header Banner' },
+    { id: 'anna_field', title: 'ANNA FIELD · MINT TEAL ACCENT COVER LETTER', category: 'Modern' },
+    { id: 'andrew_osullivan', title: 'ANDREW O\'SULLIVAN · ELEGANT SERIF COVER LETTER', category: 'Formal' },
     { id: 'desert_rock', title: 'DESERT ROCK · TWO-COLUMN COVER LETTER', category: 'Two-Column' },
     { id: 'gold_minimal', title: 'GOLD · MINIMALISTIC COVER LETTER WITH BORDER', category: 'Minimal' },
     { id: 'hunter_green', title: 'HUNTER GREEN · MULTI-COLUMN COVER LETTER', category: 'Multi-Column' },
     { id: 'viola_purple', title: 'VIOLA · MINIMALISTIC COVER LETTER', category: 'Minimal' },
     { id: 'modern_blue', title: 'MODERN SKY BLUE · ACCENT LINE COVER LETTER', category: 'Modern' },
-    { id: 'executive_classic', title: 'EXECUTIVE · FORMAL SERIF COVER LETTER', category: 'Formal' },
-    { id: 'coral_pink', title: 'CORAL PINK · ACCENT HEADER COVER LETTER', category: 'Modern' },
-    { id: 'teal_slate', title: 'TEAL SLATE · SPLIT COLUMN COVER LETTER', category: 'Multi-Column' },
-    { id: 'corporate_navy', title: 'CORPORATE NAVY · BANNER COVER LETTER', category: 'Corporate' },
-    { id: 'modern_minimal', title: 'MODERN MINIMALIST · WHITESPACE COVER LETTER', category: 'Minimal' }
+    { id: 'corporate_navy', title: 'CORPORATE NAVY · BANNER COVER LETTER', category: 'Corporate' }
   ];
 
   const handleApplyResume = (templateId) => {
@@ -157,29 +163,30 @@ export default function TemplatesPage({ resume, setResume, onNavigate, onEditCov
           </p>
         </div>
 
-        {/* Tab Toggle */}
+        {/* Tab Toggle (Resumes first, Cover Letters second) */}
         <div className="flex bg-slate-100 p-1.5 rounded-2xl border border-slate-200">
-          <button
-            onClick={() => setActiveType('cover_letters')}
-            className={`px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center space-x-2 ${
-              activeType === 'cover_letters'
-                ? 'bg-white text-sky-600 shadow-sm'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            <Mail className="w-4 h-4" />
-            <span>Cover Letters ({coverLetterTemplates.length})</span>
-          </button>
           <button
             onClick={() => setActiveType('resumes')}
             className={`px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center space-x-2 ${
               activeType === 'resumes'
-                ? 'bg-white text-sky-600 shadow-sm'
+                ? 'bg-white text-sky-600 shadow-sm font-extrabold'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             <FileText className="w-4 h-4" />
             <span>Resumes ({resumeTemplates.length})</span>
+          </button>
+
+          <button
+            onClick={() => setActiveType('cover_letters')}
+            className={`px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center space-x-2 ${
+              activeType === 'cover_letters'
+                ? 'bg-white text-sky-600 shadow-sm font-extrabold'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            <Mail className="w-4 h-4" />
+            <span>Cover Letters ({coverLetterTemplates.length})</span>
           </button>
         </div>
       </div>
