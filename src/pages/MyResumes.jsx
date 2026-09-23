@@ -66,17 +66,11 @@ export default function MyResumes({ resume, setResume, versions = [], setVersion
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 text-left bg-[#f6f4ee]/60 min-h-screen">
       
-      {/* FlowCV Header matching Screenshot media_1790203398040 */}
+      {/* FlowCV Header matching Screenshot */}
       <div className="space-y-1">
         <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">My Resumes</h1>
         <p className="text-sm sm:text-base text-slate-500 font-medium">
-          Your first resume is free forever. Need more than one resume?{' '}
-          <span 
-            onClick={() => onNavigate && onNavigate('templates', 'resumes')}
-            className="underline text-slate-700 hover:text-slate-900 cursor-pointer font-semibold"
-          >
-            Upgrade your plan
-          </span>
+          Your resumes are 100% free forever with unlimited downloads.
         </p>
       </div>
 

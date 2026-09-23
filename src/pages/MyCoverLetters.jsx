@@ -75,13 +75,7 @@ export default function MyCoverLetters({ onNavigate, onEditLetter }) {
       <div className="space-y-1">
         <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">My Cover Letters</h1>
         <p className="text-sm sm:text-base text-slate-500 font-medium">
-          Your first cover letter is free forever. Need more than one cover letter?{' '}
-          <span 
-            onClick={() => onNavigate && onNavigate('templates', 'cover_letters')}
-            className="underline text-slate-700 hover:text-slate-900 cursor-pointer font-semibold"
-          >
-            Upgrade your plan
-          </span>
+          Your cover letters are 100% free forever with unlimited downloads.
         </p>
       </div>
 

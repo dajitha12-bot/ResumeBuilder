@@ -127,16 +127,16 @@ export default function TemplatesPage({ resume, setResume, onNavigate, onEditCov
   };
 
   const resumeTemplates = [
-    { id: 'hunter_green', title: 'HUNTER GREEN', category: 'Two-Column' },
-    { id: 'quicksilver', title: 'QUICKSILVER', category: 'Minimal' },
-    { id: 'cobalt_edge', title: 'COBALT EDGE', category: 'Executive' },
-    { id: 'atlantic_blue', title: 'ATLANTIC BLUE', category: 'Modern' },
-    { id: 'mercury_flow', title: 'MERCURY FLOW', category: 'Two-Column' },
-    { id: 'saffron_line', title: 'SAFFRON LINE', category: 'Classic' },
-    { id: 'classic_serif', title: 'CLASSIC SERIF', category: 'Classic' },
-    { id: 'minimal', title: 'MINIMALIST', category: 'Minimal' },
-    { id: 'software_developer', title: 'SOFTWARE DEVELOPER', category: 'Developer' },
-    { id: 'creative', title: 'CREATIVE', category: 'Creative' }
+    { id: 'sage_green', title: 'SAGE GREEN · SIDEBAR RESUME', category: 'Sidebar' },
+    { id: 'atlantic_standard', title: 'ATLANTIC STANDARD · EXECUTIVE RESUME', category: 'Executive' },
+    { id: 'atlantic_crest', title: 'ATLANTIC CREST · BANNER RESUME WITH PHOTO', category: 'Banner' },
+    { id: 'lara_miller', title: 'LARA MÜLLER DESIGNER · PURPLE SIDEBAR RESUME', category: 'Sidebar' },
+    { id: 'confident_grid', title: 'CONFIDENT GRID · TWO-COLUMN RESUME', category: 'Two-Column' },
+    { id: 'slate_focus', title: 'SLATE FOCUS · PRODUCT MANAGER RESUME', category: 'Modern' },
+    { id: 'hunter_green', title: 'HUNTER GREEN · TWO-COLUMN DARK SIDEBAR', category: 'Two-Column' },
+    { id: 'quicksilver', title: 'QUICKSILVER · CENTER PHOTO RESUME', category: 'Minimal' },
+    { id: 'cobalt_edge', title: 'COBALT EDGE · BLUE BANNER HEADER RESUME', category: 'Executive' },
+    { id: 'classic_serif', title: 'CLASSIC SERIF · ELEGANT RESUME', category: 'Classic' }
   ];
 
   const coverLetterTemplates = [
@@ -284,28 +284,8 @@ export default function TemplatesPage({ resume, setResume, onNavigate, onEditCov
 
       {/* RESUME TEMPLATES GALLERY (FlowCV Document Cards Layout) */}
       {activeType === 'resumes' && (
-        <div className="space-y-6">
-          {/* Top Right Action Bar matching screenshot media_1790203727784.png */}
-          <div className="flex justify-end items-center">
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              accept=".json,.txt,.pdf,.docx"
-              className="hidden"
-            />
-            <button
-              onClick={handleImportClick}
-              className="border-2 border-slate-900 bg-white hover:bg-slate-50 text-slate-900 text-xs font-extrabold px-4 py-2.5 rounded-xl shadow-sm transition flex items-center space-x-2"
-            >
-              <Upload className="w-4 h-4 stroke-[2.5]" />
-              <span>Import existing resume</span>
-            </button>
-          </div>
-
-          {/* Resumes Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {resumeTemplates.map(tpl => {
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {resumeTemplates.map(tpl => {
               const isSelected = activeResumeTemplate === tpl.id;
               return (
                 <div 
@@ -345,7 +325,6 @@ export default function TemplatesPage({ resume, setResume, onNavigate, onEditCov
                 </div>
               );
             })}
-          </div>
         </div>
       )}
 
