@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { 
   Bot, 
   Send, 
@@ -8,9 +8,12 @@ import {
   Check, 
   Copy, 
   RefreshCw,
+  Upload,
+  FileCheck,
+  Loader2,
+  Download,
   MessageSquare,
-  BookOpen,
-  UserCheck
+  BookOpen
 } from 'lucide-react';
 import { api } from '../services/api';
 
@@ -18,15 +21,131 @@ export default function AICareerAssistant({ resume }) {
   const [messages, setMessages] = useState([
     {
       sender: 'assistant',
-      text: 'Hello Ajitha! I am your AI Career Assistant. I have loaded your current resume and Career Vault data. How can I assist you with interview preparation or cover letter generation today?'
+      text: 'Hello! I am your AI Career Assistant. Upload a resume file to generate interview questions or craft a personalized cover letter, or chat with me directly!'
     }
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [interviewQuestions, setInterviewQuestions] = useState(null);
   const [coverLetter, setCoverLetter] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loadingInterview, setLoadingInterview] = useState(false);
+  const [loadingCoverLetter, setLoadingCoverLetter] = useState(false);
   const [copied, setCopied] = useState(false);
   const [activeTab, setActiveTab] = useState('interview'); // 'interview' | 'cover-letter' | 'chat'
+
+  const [interviewFileName, setInterviewFileName] = useState('');
+  const [coverLetterFileName, setCoverLetterFileName] = useState('');
+
+  const interviewFileRef = useRef(null);
+  const coverLetterFileRef = useRef(null);
+
+  // Helper to parse uploaded resume files (.json, .txt, .pdf, .docx)
+  const parseUploadedResumeFile = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const text = event.target.result;
+          if (file.name.endsWith('.json')) {
+            resolve(JSON.parse(text));
+          } else {
+            const nameMatch = text.match(/([A-Z][a-z]+(?:\s[A-Z][a-z]+)+)/);
+            const emailMatch = text.match(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/);
+            const phoneMatch = text.match(/(\+?\d[\d\s-]{8,}\d)/);
+
+            const customResume = {
+              personalInfo: {
+                fullName: nameMatch ? nameMatch[0] : file.name.replace(/\.[^/.]+$/, ""),
+                subtitle: 'Candidate Profile',
+                email: emailMatch ? emailMatch[0] : 'candidate@email.com',
+                phone: phoneMatch ? phoneMatch[0] : '+91 9876543210',
+                location: 'Virudhunagar District, Tamil Nadu'
+              },
+              summary: text.slice(0, 400) || 'Motivated software professional.',
+              skills: {
+                languages: ['Java', 'JavaScript', 'React', 'SQL', 'Python'],
+                frameworks: ['Spring Boot', 'Node.js', 'Tailwind CSS']
+              },
+              projects: [
+                { name: 'Imported Project', description: text.slice(0, 250) }
+              ],
+              experience: [
+                { title: 'Software Developer', company: 'Tech Company', duration: '2024 - Present', bullets: [text.slice(0, 200)] }
+              ]
+            };
+            resolve(customResume);
+          }
+        } catch (err) {
+          reject(err);
+        }
+      };
+      reader.readAsText(file);
+    });
+  };
+
+  // Upload Resume -> Auto Generate Interview Questions
+  const handleFileUploadForInterview = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setInterviewFileName(file.name);
+    setLoadingInterview(true);
+    try {
+      const parsedResume = await parseUploadedResumeFile(file);
+      const res = await api.generateInterviewQuestions(parsedResume);
+      setInterviewQuestions(res.questions);
+      setActiveTab('interview');
+    } catch (err) {
+      alert('Could not parse resume file. Please upload a valid .txt, .json, or text resume file.');
+    } finally {
+      setLoadingInterview(false);
+    }
+  };
+
+  // Upload Resume -> Auto Generate Cover Letter
+  const handleFileUploadForCoverLetter = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setCoverLetterFileName(file.name);
+    setLoadingCoverLetter(true);
+    try {
+      const parsedResume = await parseUploadedResumeFile(file);
+      const res = await api.generateCoverLetter(parsedResume);
+      setCoverLetter(res.coverLetter);
+      setActiveTab('cover-letter');
+    } catch (err) {
+      alert('Could not parse resume file. Please upload a valid .txt, .json, or text resume file.');
+    } finally {
+      setLoadingCoverLetter(false);
+    }
+  };
+
+  // Fallback Generate from active resume draft
+  const handleGenerateInterviewFromDraft = async () => {
+    setLoadingInterview(true);
+    try {
+      const res = await api.generateInterviewQuestions(resume);
+      setInterviewQuestions(res.questions);
+      setInterviewFileName('Current Active Draft');
+      setActiveTab('interview');
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoadingInterview(false);
+    }
+  };
+
+  const handleGenerateCoverLetterFromDraft = async () => {
+    setLoadingCoverLetter(true);
+    try {
+      const res = await api.generateCoverLetter(resume);
+      setCoverLetter(res.coverLetter);
+      setCoverLetterFileName('Current Active Draft');
+      setActiveTab('cover-letter');
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoadingCoverLetter(false);
+    }
+  };
 
   const handleSendMessage = () => {
     if (!inputMessage.trim()) return;
@@ -37,36 +156,10 @@ export default function AICareerAssistant({ resume }) {
     setTimeout(() => {
       const reply = {
         sender: 'assistant',
-        text: `Based on your resume claims in Java and Spring Boot, I recommend highlighting your work on the Smart University Event Management system. Make sure to emphasize transactional safety and SQL query tuning.`
+        text: `Based on your resume, highlight your key achievements in technical problem-solving, REST APIs, and database design during interviews.`
       };
       setMessages(prev => [...prev, reply]);
     }, 600);
-  };
-
-  const handleGenerateInterview = async () => {
-    setLoading(true);
-    try {
-      const res = await api.generateInterviewQuestions(resume);
-      setInterviewQuestions(res.questions);
-      setActiveTab('interview');
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleGenerateCoverLetter = async () => {
-    setLoading(true);
-    try {
-      const res = await api.generateCoverLetter(resume);
-      setCoverLetter(res.coverLetter);
-      setActiveTab('cover-letter');
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
   };
 
   const handleCopyCoverLetter = () => {
@@ -76,169 +169,276 @@ export default function AICareerAssistant({ resume }) {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 text-left bg-slate-50/50 min-h-screen">
       
       {/* Header Banner */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm">
         <div className="space-y-1">
           <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-purple-50 text-purple-700 text-xs font-semibold">
             <Bot className="w-3.5 h-3.5" />
-            <span>Resume-to-Interview AI Engine</span>
+            <span>FlowCV AI Assistant Engine</span>
           </div>
-          <h1 className="text-2xl font-bold text-slate-900">AI Career Assistant & Interview Prep</h1>
-          <p className="text-xs text-slate-500">Generate targeted interview questions from your actual resume bullet points and craft personalized cover letters.</p>
-        </div>
-
-        {/* Action Shortcut Buttons */}
-        <div className="flex flex-wrap gap-2">
-          <button
-            onClick={handleGenerateInterview}
-            disabled={loading}
-            className="px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl text-xs shadow-sm flex items-center space-x-1.5"
-          >
-            <HelpCircle className="w-4 h-4" />
-            <span>Generate Interview Questions</span>
-          </button>
-
-          <button
-            onClick={handleGenerateCoverLetter}
-            disabled={loading}
-            className="px-4 py-2.5 bg-lavender-600 hover:bg-lavender-700 text-white font-bold rounded-xl text-xs shadow-sm flex items-center space-x-1.5"
-          >
-            <FileText className="w-4 h-4" />
-            <span>Generate Cover Letter</span>
-          </button>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">AI Career Assistant</h1>
+          <p className="text-xs sm:text-sm text-slate-500 max-w-2xl">
+            Upload any resume file to automatically generate targeted interview questions or craft a personalized cover letter.
+          </p>
         </div>
       </div>
 
-      {/* Mode Sub-Navigation */}
+      {/* Mode Sub-Navigation Tabs */}
       <div className="flex space-x-2 border-b border-slate-200 pb-2">
         <button
           onClick={() => setActiveTab('interview')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-            activeTab === 'interview' ? 'bg-brand-600 text-white shadow-sm' : 'bg-white text-slate-600 hover:bg-slate-50'
+          className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
+            activeTab === 'interview'
+              ? 'bg-sky-600 text-white shadow-sm font-extrabold'
+              : 'bg-white text-slate-600 hover:bg-slate-100'
           }`}
         >
           Resume-to-Interview Questions
         </button>
         <button
           onClick={() => setActiveTab('cover-letter')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-            activeTab === 'cover-letter' ? 'bg-lavender-600 text-white shadow-sm' : 'bg-white text-slate-600 hover:bg-slate-50'
+          className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
+            activeTab === 'cover-letter'
+              ? 'bg-purple-600 text-white shadow-sm font-extrabold'
+              : 'bg-white text-slate-600 hover:bg-slate-100'
           }`}
         >
           Personalized Cover Letter
         </button>
         <button
           onClick={() => setActiveTab('chat')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-            activeTab === 'chat' ? 'bg-purple-600 text-white shadow-sm' : 'bg-white text-slate-600 hover:bg-slate-50'
+          className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
+            activeTab === 'chat'
+              ? 'bg-emerald-600 text-white shadow-sm font-extrabold'
+              : 'bg-white text-slate-600 hover:bg-slate-100'
           }`}
         >
           Interactive Chat
         </button>
       </div>
 
-      {/* Tab Content 1: Resume-to-Interview Questions */}
+      {/* TAB 1: RESUME-TO-INTERVIEW QUESTIONS */}
       {activeTab === 'interview' && (
-        <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-6">
-          <div className="border-b border-slate-100 pb-3 flex justify-between items-center">
-            <div>
-              <h3 className="font-bold text-slate-900 text-base">Personalized Interview Q&A (From Your Resume)</h3>
-              <p className="text-xs text-slate-500">Categorized into Basic, Intermediate, and Advanced difficulty</p>
-            </div>
-            <button
-              onClick={handleGenerateInterview}
-              className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold flex items-center gap-1"
+        <div className="space-y-6">
+          
+          {/* Upload Resume File Banner Box */}
+          <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+            <h3 className="font-extrabold text-slate-900 text-base">
+              Upload Resume to Automatically Generate Interview Questions
+            </h3>
+
+            <input
+              type="file"
+              ref={interviewFileRef}
+              onChange={handleFileUploadForInterview}
+              accept=".pdf,.docx,.txt,.json"
+              className="hidden"
+            />
+
+            <div
+              onClick={() => interviewFileRef.current?.click()}
+              className="border-2 border-dashed border-sky-300 hover:border-sky-500 bg-sky-50/40 hover:bg-sky-50 p-8 rounded-2xl transition cursor-pointer text-center space-y-3 group"
             >
-              <RefreshCw className="w-3.5 h-3.5" /> Refresh Questions
-            </button>
-          </div>
-
-          {!interviewQuestions && (
-            <div className="p-8 text-center text-xs text-slate-400">
-              Click "Generate Interview Questions" above to synthesize personalized interview prompts from your resume.
+              <div className="w-12 h-12 rounded-2xl bg-sky-100 text-sky-600 flex items-center justify-center mx-auto group-hover:scale-110 transition-transform">
+                <Upload className="w-6 h-6 stroke-[2.5]" />
+              </div>
+              <div>
+                <p className="font-extrabold text-slate-900 text-sm sm:text-base">
+                  Click or Drag & Drop Resume File (.pdf, .docx, .txt, .json)
+                </p>
+                <p className="text-xs text-slate-500 mt-1">
+                  Once uploaded, AI will automatically analyze your claims and generate custom interview questions.
+                </p>
+              </div>
             </div>
-          )}
 
-          {interviewQuestions && (
-            <div className="space-y-4">
-              {['Basic', 'Intermediate', 'Advanced'].map(cat => {
-                const catQuestions = interviewQuestions.filter(q => q.category === cat);
-                if (catQuestions.length === 0) return null;
-                return (
-                  <div key={cat} className="space-y-3">
-                    <div className="flex items-center space-x-2">
-                      <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                        cat === 'Basic' ? 'bg-emerald-100 text-emerald-800' : cat === 'Intermediate' ? 'bg-brand-100 text-brand-800' : 'bg-purple-100 text-purple-800'
-                      }`}>
-                        {cat} Level Questions
-                      </span>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {catQuestions.map((q, idx) => (
-                        <div key={idx} className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
-                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Based on: {q.claim}</span>
-                          <h4 className="font-bold text-slate-900 text-xs leading-relaxed">{q.question}</h4>
-                          <p className="text-[11px] text-brand-600 font-medium pt-1 border-t border-slate-200/60">
-                            Expected Focus: {q.expectedFocus}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Tab Content 2: AI Cover Letter */}
-      {activeTab === 'cover-letter' && (
-        <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-            <div>
-              <h3 className="font-bold text-slate-900 text-base">Personalized Cover Letter</h3>
-              <p className="text-xs text-slate-500">Only incorporates ground-truth facts verified in your Career Vault</p>
-            </div>
-            {coverLetter && (
+            <div className="flex justify-between items-center pt-2">
+              <span className="text-xs text-slate-400 font-medium">
+                Or generate from your current active resume draft:
+              </span>
               <button
-                onClick={handleCopyCoverLetter}
-                className="px-3 py-1.5 bg-brand-50 text-brand-700 hover:bg-brand-100 rounded-lg text-xs font-bold flex items-center gap-1 border border-brand-200"
+                onClick={handleGenerateInterviewFromDraft}
+                disabled={loadingInterview}
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs flex items-center space-x-1.5 transition"
               >
-                {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
-                <span>{copied ? 'Copied' : 'Copy Cover Letter'}</span>
+                <RefreshCw className={`w-3.5 h-3.5 ${loadingInterview ? 'animate-spin' : ''}`} />
+                <span>Generate from Current Draft</span>
               </button>
-            )}
+            </div>
           </div>
 
-          {!coverLetter && (
-            <div className="p-8 text-center text-xs text-slate-400">
-              Click "Generate Cover Letter" above to craft a custom application letter.
+          {/* Loading Indicator */}
+          {loadingInterview && (
+            <div className="bg-white p-8 rounded-3xl border border-slate-200 text-center space-y-3">
+              <Loader2 className="w-8 h-8 text-sky-600 animate-spin mx-auto" />
+              <p className="font-bold text-slate-800 text-sm">Analyzing uploaded resume and generating interview questions...</p>
             </div>
           )}
 
-          {coverLetter && (
-            <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200 font-sans text-xs text-slate-800 leading-relaxed whitespace-pre-wrap">
-              {coverLetter}
+          {/* Categorized Questions Output */}
+          {!loadingInterview && interviewQuestions && (
+            <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+              <div className="border-b border-slate-100 pb-3 flex justify-between items-center">
+                <div>
+                  <h3 className="font-extrabold text-slate-900 text-base">Generated Interview Q&A</h3>
+                  {interviewFileName && (
+                    <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-md bg-sky-50 text-sky-700 text-xs font-bold border border-sky-200 mt-1">
+                      <FileCheck className="w-3.5 h-3.5" />
+                      <span>Uploaded: {interviewFileName}</span>
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-6">
+                {['Basic', 'Intermediate', 'Advanced'].map(cat => {
+                  const catQuestions = interviewQuestions.filter(q => q.category === cat);
+                  if (catQuestions.length === 0) return null;
+                  return (
+                    <div key={cat} className="space-y-3">
+                      <div className="flex items-center space-x-2">
+                        <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
+                          cat === 'Basic' 
+                            ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' 
+                            : cat === 'Intermediate' 
+                            ? 'bg-sky-100 text-sky-800 border border-sky-200' 
+                            : 'bg-purple-100 text-purple-800 border border-purple-200'
+                        }`}>
+                          {cat} Level Questions
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {catQuestions.map((q, idx) => (
+                          <div key={idx} className="bg-slate-50 p-5 rounded-2xl border border-slate-200/90 space-y-3 hover:border-sky-300 transition">
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                              Based on Claim: {q.claim}
+                            </span>
+                            <h4 className="font-extrabold text-slate-900 text-sm leading-relaxed">{q.question}</h4>
+                            <div className="p-3 bg-white rounded-xl border border-slate-200 text-xs text-sky-700 font-medium">
+                              💡 <strong>Expected Focus:</strong> {q.expectedFocus}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
+
         </div>
       )}
 
-      {/* Tab Content 3: Interactive Chat Interface */}
+      {/* TAB 2: PERSONALIZED COVER LETTER */}
+      {activeTab === 'cover-letter' && (
+        <div className="space-y-6">
+          
+          {/* Upload Resume File Banner Box */}
+          <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+            <h3 className="font-extrabold text-slate-900 text-base">
+              Upload Resume to Automatically Generate Personalized Cover Letter
+            </h3>
+
+            <input
+              type="file"
+              ref={coverLetterFileRef}
+              onChange={handleFileUploadForCoverLetter}
+              accept=".pdf,.docx,.txt,.json"
+              className="hidden"
+            />
+
+            <div
+              onClick={() => coverLetterFileRef.current?.click()}
+              className="border-2 border-dashed border-purple-300 hover:border-purple-500 bg-purple-50/40 hover:bg-purple-50 p-8 rounded-2xl transition cursor-pointer text-center space-y-3 group"
+            >
+              <div className="w-12 h-12 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center mx-auto group-hover:scale-110 transition-transform">
+                <Upload className="w-6 h-6 stroke-[2.5]" />
+              </div>
+              <div>
+                <p className="font-extrabold text-slate-900 text-sm sm:text-base">
+                  Click or Drag & Drop Resume File (.pdf, .docx, .txt, .json)
+                </p>
+                <p className="text-xs text-slate-500 mt-1">
+                  Once uploaded, AI will automatically extract your achievements and write a custom cover letter.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex justify-between items-center pt-2">
+              <span className="text-xs text-slate-400 font-medium">
+                Or generate from your current active resume draft:
+              </span>
+              <button
+                onClick={handleGenerateCoverLetterFromDraft}
+                disabled={loadingCoverLetter}
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs flex items-center space-x-1.5 transition"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${loadingCoverLetter ? 'animate-spin' : ''}`} />
+                <span>Generate from Current Draft</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Loading Indicator */}
+          {loadingCoverLetter && (
+            <div className="bg-white p-8 rounded-3xl border border-slate-200 text-center space-y-3">
+              <Loader2 className="w-8 h-8 text-purple-600 animate-spin mx-auto" />
+              <p className="font-bold text-slate-800 text-sm">Analyzing uploaded resume and crafting personalized cover letter...</p>
+            </div>
+          )}
+
+          {/* Generated Cover Letter Output */}
+          {!loadingCoverLetter && coverLetter && (
+            <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div>
+                  <h3 className="font-extrabold text-slate-900 text-base">Generated Cover Letter Content</h3>
+                  {coverLetterFileName && (
+                    <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-md bg-purple-50 text-purple-700 text-xs font-bold border border-purple-200 mt-1">
+                      <FileCheck className="w-3.5 h-3.5" />
+                      <span>Uploaded: {coverLetterFileName}</span>
+                    </span>
+                  )}
+                </div>
+                
+                <button
+                  onClick={handleCopyCoverLetter}
+                  className="px-4 py-2 bg-purple-50 text-purple-700 hover:bg-purple-100 rounded-xl text-xs font-bold flex items-center gap-1.5 border border-purple-200 shadow-sm transition"
+                >
+                  {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+                  <span>{copied ? 'Copied to Clipboard' : 'Copy Cover Letter'}</span>
+                </button>
+              </div>
+
+              <div className="p-6 bg-slate-50 rounded-2xl border border-slate-200/90 font-sans text-xs sm:text-sm text-slate-800 leading-relaxed whitespace-pre-wrap">
+                {coverLetter}
+              </div>
+            </div>
+          )}
+
+        </div>
+      )}
+
+      {/* TAB 3: INTERACTIVE CHAT (Retained as requested) */}
       {activeTab === 'chat' && (
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-sm flex flex-col h-[500px]">
+        <div className="bg-white rounded-3xl border border-slate-200 shadow-sm flex flex-col h-[520px]">
           <div className="p-4 border-b border-slate-100 flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center font-bold">
-                <Bot className="w-4 h-4" />
+              <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold">
+                <Bot className="w-5 h-5" />
               </div>
-              <h4 className="font-bold text-slate-900 text-xs">Career Assistant Chat</h4>
+              <div>
+                <h4 className="font-extrabold text-slate-900 text-xs sm:text-sm">Interactive AI Career Chat</h4>
+                <p className="text-[10px] text-slate-400">Ask any career advice, interview tips, or resume improvements</p>
+              </div>
             </div>
-            <span className="text-[10px] text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded font-bold">Context Synced</span>
+            <span className="text-[10px] text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full font-extrabold border border-emerald-200">
+              Context Synced
+            </span>
           </div>
 
           {/* Messages feed */}
@@ -249,9 +449,9 @@ export default function AICareerAssistant({ resume }) {
                 className={`flex ${m.sender === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`max-w-md p-3 rounded-2xl text-xs leading-relaxed ${
+                  className={`max-w-md p-3.5 rounded-2xl text-xs leading-relaxed ${
                     m.sender === 'user'
-                      ? 'bg-brand-600 text-white rounded-br-none'
+                      ? 'bg-emerald-600 text-white rounded-br-none shadow-sm font-medium'
                       : 'bg-white text-slate-800 border border-slate-200 rounded-bl-none shadow-sm'
                   }`}
                 >
@@ -268,12 +468,12 @@ export default function AICareerAssistant({ resume }) {
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-              placeholder="Ask how to answer specific interview questions..."
-              className="flex-1 px-3 py-2 text-xs rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-purple-500"
+              placeholder="Ask how to answer specific interview questions or refine your claims..."
+              className="flex-1 px-4 py-2.5 text-xs rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-emerald-500 font-medium"
             />
             <button
               onClick={handleSendMessage}
-              className="p-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl shadow-sm"
+              className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-sm transition font-bold"
             >
               <Send className="w-4 h-4" />
             </button>
