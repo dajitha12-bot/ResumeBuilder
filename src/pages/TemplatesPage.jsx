@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Palette, CheckCircle2, ArrowRight, Mail, FileText } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { Palette, CheckCircle2, ArrowRight, Mail, FileText, Upload } from 'lucide-react';
 import { StorageService } from '../services/storageService';
 import ResumePreview from '../components/ResumePreview';
 import CoverLetterPreview from '../components/CoverLetterPreview';
@@ -62,6 +62,7 @@ export default function TemplatesPage({ resume, setResume, onNavigate, onEditCov
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedLetterTemplate, setSelectedLetterTemplate] = useState(null);
   const [newLetterName, setNewLetterName] = useState('');
+  const fileInputRef = useRef(null);
 
   React.useEffect(() => {
     if (initialType) {
@@ -76,17 +77,66 @@ export default function TemplatesPage({ resume, setResume, onNavigate, onEditCov
     }
   };
 
+  const handleImportClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const content = event.target.result;
+        let importedData;
+
+        if (file.name.endsWith('.json')) {
+          importedData = JSON.parse(content);
+        } else {
+          importedData = {
+            personalInfo: {
+              fullName: 'Ajitha D R',
+              subtitle: file.name.replace(/\.[^/.]+$/, ""),
+              email: 'dajitha12@gmail.com',
+              phone: '6374784776',
+              location: 'Aruppukottai, Virudhunagar District, Tamil Nadu'
+            },
+            summary: content.slice(0, 300) || 'Imported resume contents',
+            education: [
+              { degree: 'B.Tech – Information Technology', institution: 'National Engineering College', year: '2024 – 2028', details: 'CGPA: 8.7' }
+            ],
+            skills: {
+              languages: ['Java', 'JavaScript', 'React', 'SQL'],
+              frameworks: ['Tailwind CSS', 'Node.js']
+            }
+          };
+        }
+
+        if (setResume) setResume(prev => ({ ...prev, ...importedData }));
+        alert(`Resume "${file.name}" imported successfully! Opening Resume Editor.`);
+        if (onNavigate) onNavigate('builder');
+      } catch (err) {
+        alert('Could not parse resume file. Please upload a valid JSON or text resume.');
+      }
+    };
+
+    reader.readAsText(file);
+  };
+
   const resumeTemplates = [
-    { id: 'classic_serif', title: 'CLASSIC SERIF · BLUE UNDERLINE RESUME', category: 'Classic' },
-    { id: 'modern', title: 'MODERN PROFILE · SINGLE-COLUMN RESUME', category: 'Modern' },
-    { id: 'two_column', title: 'MODERN COLUMN · TWO-COLUMN RESUME', category: 'Two-Column' },
-    { id: 'minimal', title: 'MINIMALIST · CLEAN WHITESPACE RESUME', category: 'Minimal' },
-    { id: 'executive', title: 'EXECUTIVE · SENIOR NAVY ACCENT RESUME', category: 'Executive' },
-    { id: 'fresher', title: 'FRESHER · STUDENT TIMELINE RESUME', category: 'Student' },
-    { id: 'software_developer', title: 'SOFTWARE DEVELOPER · TECH STACK RESUME', category: 'Developer' },
-    { id: 'creative', title: 'CREATIVE · MODERN PILL ACCENT RESUME', category: 'Creative' },
-    { id: 'emerald_corporate', title: 'EMERALD · CORPORATE GREEN RESUME', category: 'Corporate' },
-    { id: 'coral_modern', title: 'CORAL PINK · MODERN SIDEBAR RESUME', category: 'Modern' }
+    { id: 'hunter_green', title: 'HUNTER GREEN', category: 'Two-Column' },
+    { id: 'quicksilver', title: 'QUICKSILVER', category: 'Minimal' },
+    { id: 'cobalt_edge', title: 'COBALT EDGE', category: 'Executive' },
+    { id: 'atlantic_blue', title: 'ATLANTIC BLUE', category: 'Modern' },
+    { id: 'mercury_flow', title: 'MERCURY FLOW', category: 'Two-Column' },
+    { id: 'saffron_line', title: 'SAFFRON LINE', category: 'Classic' },
+    { id: 'classic_serif', title: 'CLASSIC SERIF', category: 'Classic' },
+    { id: 'minimal', title: 'MINIMALIST', category: 'Minimal' },
+    { id: 'software_developer', title: 'SOFTWARE DEVELOPER', category: 'Developer' },
+    { id: 'creative', title: 'CREATIVE', category: 'Creative' }
   ];
 
   const coverLetterTemplates = [
@@ -234,47 +284,68 @@ export default function TemplatesPage({ resume, setResume, onNavigate, onEditCov
 
       {/* RESUME TEMPLATES GALLERY (FlowCV Document Cards Layout) */}
       {activeType === 'resumes' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {resumeTemplates.map(tpl => {
-            const isSelected = activeResumeTemplate === tpl.id;
-            return (
-              <div 
-                key={tpl.id}
-                onClick={() => handleApplyResume(tpl.id)}
-                className={`bg-white rounded-2xl border transition-all cursor-pointer flex flex-col justify-between group overflow-hidden ${
-                  isSelected
-                    ? 'border-sky-500 ring-4 ring-sky-500/20 shadow-xl'
-                    : 'border-slate-200/90 hover:border-sky-500 hover:ring-4 hover:ring-sky-500/10 shadow-sm hover:shadow-xl'
-                }`}
-              >
-                {/* Live Scaled Document Preview Box */}
-                <div className="h-80 bg-[#f8f9fa] p-4 relative overflow-hidden flex justify-center border-b border-slate-100 items-start">
-                  <div className="transform scale-[0.32] origin-top w-[800px] pointer-events-none select-none shadow-md rounded border border-slate-200">
-                    <ResumePreview resume={SAMPLE_RESUME} template={tpl.id} zoom={100} />
-                  </div>
-                  
-                  {/* Hover Overlay Button */}
-                  <div className="absolute inset-0 bg-slate-900/20 backdrop-blur-[1px] opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
-                    <span className="px-5 py-2.5 bg-sky-600 text-white font-bold text-xs rounded-xl shadow-lg transform group-hover:scale-105 transition">
-                      {isSelected ? 'Open in Resume Editor ✏️' : 'Use This Template ✨'}
-                    </span>
-                  </div>
-                </div>
+        <div className="space-y-6">
+          {/* Top Right Action Bar matching screenshot media_1790203727784.png */}
+          <div className="flex justify-end items-center">
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              accept=".json,.txt,.pdf,.docx"
+              className="hidden"
+            />
+            <button
+              onClick={handleImportClick}
+              className="border-2 border-slate-900 bg-white hover:bg-slate-50 text-slate-900 text-xs font-extrabold px-4 py-2.5 rounded-xl shadow-sm transition flex items-center space-x-2"
+            >
+              <Upload className="w-4 h-4 stroke-[2.5]" />
+              <span>Import existing resume</span>
+            </button>
+          </div>
 
-                {/* Card Footer Caption */}
-                <div className="p-4 bg-white flex justify-between items-center">
-                  <p className="text-[11px] font-bold text-slate-500 group-hover:text-sky-600 tracking-wider uppercase transition">
-                    {tpl.title}
-                  </p>
-                  {isSelected && (
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                      Active
-                    </span>
-                  )}
+          {/* Resumes Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {resumeTemplates.map(tpl => {
+              const isSelected = activeResumeTemplate === tpl.id;
+              return (
+                <div 
+                  key={tpl.id}
+                  onClick={() => handleApplyResume(tpl.id)}
+                  className={`bg-white rounded-2xl border transition-all cursor-pointer flex flex-col justify-between group overflow-hidden ${
+                    isSelected
+                      ? 'border-sky-500 ring-4 ring-sky-500/20 shadow-xl'
+                      : 'border-slate-200/90 hover:border-sky-500 hover:ring-4 hover:ring-sky-500/10 shadow-sm hover:shadow-xl'
+                  }`}
+                >
+                  {/* Live Scaled Document Preview Box */}
+                  <div className="h-80 bg-[#f8f9fa] p-4 relative overflow-hidden flex justify-center border-b border-slate-100 items-start">
+                    <div className="transform scale-[0.32] origin-top w-[800px] pointer-events-none select-none shadow-md rounded border border-slate-200">
+                      <ResumePreview resume={SAMPLE_RESUME} template={tpl.id} zoom={100} />
+                    </div>
+                    
+                    {/* Hover Overlay Button */}
+                    <div className="absolute inset-0 bg-slate-900/20 backdrop-blur-[1px] opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                      <span className="px-5 py-2.5 bg-sky-600 text-white font-bold text-xs rounded-xl shadow-lg transform group-hover:scale-105 transition">
+                        {isSelected ? 'Open in Resume Editor ✏️' : 'Use This Template ✨'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Card Footer Caption */}
+                  <div className="p-4 bg-white flex justify-between items-center">
+                    <p className="text-[11px] font-bold text-slate-500 group-hover:text-sky-600 tracking-wider uppercase transition">
+                      {tpl.title}
+                    </p>
+                    {isSelected && (
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        Active
+                      </span>
+                    )}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       )}
 
