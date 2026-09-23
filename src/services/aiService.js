@@ -92,19 +92,31 @@ export class MockAIEngine {
     return questions;
   }
 
-  static generateCoverLetter(data) {
-    const name = data?.senderName || 'Ajitha D R';
-    const role = data?.jobTitle || 'Software Engineer';
-    const company = data?.companyName || 'Target Tech Company';
+  static generateCoverLetter(data, jobOptions = {}) {
+    const name = data?.personalInfo?.fullName || data?.senderName || 'Ajitha D R';
+    const role = jobOptions?.targetJobTitle || data?.targetJobTitle || data?.jobTitle || 'Software Development Engineer';
+    const company = jobOptions?.targetCompany || data?.targetCompany || data?.companyName || 'Target Company';
+    const degree = data?.personalInfo?.subtitle || 'B.Tech Information Technology';
+    
+    let skillsList = 'React, Node.js, JavaScript, and Java';
+    if (data?.skills) {
+      if (Array.isArray(data.skills)) {
+        skillsList = data.skills.slice(0, 4).join(', ');
+      } else if (typeof data.skills === 'object') {
+        const allSkills = [...(data.skills.languages || []), ...(data.skills.frameworks || [])];
+        if (allSkills.length) skillsList = allSkills.slice(0, 4).join(', ');
+      }
+    }
 
-    return {
-      opening: `I am writing to express my strong enthusiasm for the ${role} position at ${company}. As a dedicated Information Technology student with practical software development experience, I am eager to contribute my technical skills and passion to your engineering team.`,
-      body: [
-        `During my academic studies and project work, I have gained hands-on experience in building modern web applications, RESTful APIs, and responsive user interfaces. I have successfully led software projects implementing React, Node.js, and Java backend services with modular architecture.`,
-        `What attracts me to ${company} is your reputation for innovation and quality software engineering. I pride myself on rapid problem solving, writing clean code, and working seamlessly within collaborative teams.`
-      ],
-      closing: `Thank you for considering my application for the ${role} position. I welcome the opportunity to interview and discuss how my background and enthusiasm align with ${company}'s goals.`
-    };
+    const opening = `Dear Hiring Manager at ${company},\n\nI am writing to express my strong enthusiasm for the ${role} position at ${company}. As a dedicated ${degree} candidate with a solid foundation in web technologies and software engineering principles, I am confident that my background aligns well with your team's goals.`;
+    
+    const body1 = `Throughout my academic training and project development, I have gained hands-on experience in building scalable applications using ${skillsList}. I have developed responsive user interfaces, implemented clean modular architecture, and built robust API services prioritizing performance and code quality.`;
+    
+    const body2 = `What excites me about joining ${company} is your culture of engineering excellence and product innovation. I bring a strong analytical mindset, rapid problem-solving abilities, and a passion for delivering impactful software solutions.`;
+    
+    const closing = `Thank you for taking the time to review my application for the ${role} position. I look forward to the opportunity to discuss how my technical skills and enthusiasm can contribute to ${company}.\n\nSincerely,\n${name}`;
+
+    return `${opening}\n\n${body1}\n\n${body2}\n\n${closing}`;
   }
 
   static analyzeSkillGap(resumeSkills = [], jobSkills = []) {
