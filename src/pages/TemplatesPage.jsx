@@ -6,6 +6,13 @@ export default function TemplatesPage({ resume, setResume, onNavigate }) {
 
   const resumeTemplates = [
     {
+      id: 'classic_serif',
+      title: 'FlowCV Classic Serif',
+      badge: 'Blue Underline Titles',
+      desc: 'Serif typography with solid blue underline section headers, right photo avatar, and timeline education.',
+      previewBg: 'font-serif bg-white border-b-2 border-sky-600'
+    },
+    {
       id: 'modern',
       title: 'Modern Single-Column',
       badge: 'FlowCV Default',
@@ -18,13 +25,6 @@ export default function TemplatesPage({ resume, setResume, onNavigate }) {
       badge: 'Popular Choice',
       desc: 'Side-by-side header layout with dark grey contact sidebar and blue underline sections.',
       previewBg: 'bg-white border-l-4 border-sky-600'
-    },
-    {
-      id: 'classic_serif',
-      title: 'Classic Academic Serif',
-      badge: 'Formal Serif',
-      desc: 'Traditional serif typography with centered header for formal corporate roles.',
-      previewBg: 'font-serif bg-white border-b-2 border-slate-900'
     },
     {
       id: 'minimal',
@@ -60,6 +60,20 @@ export default function TemplatesPage({ resume, setResume, onNavigate }) {
       badge: 'Modern Pill Style',
       desc: 'Pastel highlights for skills, certifications, and technical domains.',
       previewBg: 'bg-indigo-50 border border-indigo-100'
+    },
+    {
+      id: 'emerald_corporate',
+      title: 'Emerald Corporate',
+      badge: 'Emerald Green Accent',
+      desc: 'Deep emerald section titles with dark slate photo framing and clean typography.',
+      previewBg: 'bg-emerald-50/60 border-l-4 border-emerald-600'
+    },
+    {
+      id: 'coral_modern',
+      title: 'Coral Pink Modern',
+      badge: 'Coral Pink Accent',
+      desc: 'Coral pink section headers and sidebar framing for modern tech roles.',
+      previewBg: 'bg-rose-50/60 border-l-4 border-rose-500'
     }
   ];
 
@@ -68,35 +82,35 @@ export default function TemplatesPage({ resume, setResume, onNavigate }) {
       id: 'desert_rock',
       title: 'Desert Rock',
       badge: 'Two-Column Layout',
-      desc: 'Warm beige left sidebar with circular avatar photo, name & contact info; white letter body right.',
+      desc: 'Warm beige left sidebar with photo frame, sender details, and right letter body column.',
       previewBg: 'bg-[#e8e0d5] border border-[#d4c8b8]'
     },
     {
       id: 'gold_minimal',
       title: 'Gold Minimal',
       badge: 'Border Frame',
-      desc: 'Gold border frame with top inline header, photo frame, and gold accent dividers.',
+      desc: 'Gold border frame with top inline header, photo upload frame, and gold accent dividers.',
       previewBg: 'bg-white border-2 border-[#d4af37]'
     },
     {
       id: 'hunter_green',
       title: 'Hunter Green',
       badge: 'Multi-Column',
-      desc: 'Sage green left sidebar for contact details and photo; crisp white body area right.',
+      desc: 'Sage green left sidebar for contact details and photo; crisp white letter column right.',
       previewBg: 'bg-[#2b4c3f] text-white border border-[#1e382e]'
     },
     {
       id: 'viola_purple',
       title: 'Viola Purple',
       badge: 'Top Banner Band',
-      desc: 'Dark purple top header band with circular avatar photo & white text; white letter body below.',
+      desc: 'Dark purple top header band with photo frame & white text; white letter body below.',
       previewBg: 'bg-[#3b1e3e] text-white border border-purple-900'
     },
     {
       id: 'modern_blue',
       title: 'Modern Blue',
       badge: 'Clean Blue Accent',
-      desc: 'Sky blue accent line header, structured recipient box, and formal typography.',
+      desc: 'Sky blue accent line header, photo frame, recipient box, and formal typography.',
       previewBg: 'border-t-4 border-sky-600 bg-white'
     },
     {
@@ -105,6 +119,34 @@ export default function TemplatesPage({ resume, setResume, onNavigate }) {
       badge: 'Formal Serif',
       desc: 'Formal serif typography with centered header for executive applications.',
       previewBg: 'font-serif bg-white border-b border-slate-400'
+    },
+    {
+      id: 'coral_pink',
+      title: 'Coral Pink Accent',
+      badge: 'Coral Modern',
+      desc: 'Coral pink top header underline and photo frame for modern applications.',
+      previewBg: 'border-t-4 border-rose-500 bg-white'
+    },
+    {
+      id: 'teal_slate',
+      title: 'Teal Slate Split',
+      badge: 'Teal Split Column',
+      desc: 'Dark teal left sidebar with contact details and photo; clean main body right.',
+      previewBg: 'bg-teal-900 text-white border border-teal-950'
+    },
+    {
+      id: 'corporate_navy',
+      title: 'Corporate Navy',
+      badge: 'Navy Banner',
+      desc: 'Dark navy blue top header band with photo frame and crisp white body.',
+      previewBg: 'bg-slate-900 text-white border border-slate-950'
+    },
+    {
+      id: 'modern_minimal',
+      title: 'Modern Minimalist',
+      badge: 'Clean Whitespace',
+      desc: 'Clean whitespace with generous margins and subtle grey accent dividers.',
+      previewBg: 'bg-slate-50 border border-slate-200'
     }
   ];
 
@@ -117,7 +159,7 @@ export default function TemplatesPage({ resume, setResume, onNavigate }) {
     if (onNavigate) onNavigate('cover-letters');
   };
 
-  const activeResumeTemplate = resume?.template || 'modern';
+  const activeResumeTemplate = resume?.template || 'classic_serif';
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 text-left">
@@ -129,8 +171,8 @@ export default function TemplatesPage({ resume, setResume, onNavigate }) {
             <Palette className="w-3.5 h-3.5" />
             <span>FlowCV Template Gallery</span>
           </div>
-          <h1 className="text-2xl font-extrabold text-slate-900">FlowCV Templates</h1>
-          <p className="text-xs text-slate-500">Choose from ATS-friendly Resume and Cover Letter designs.</p>
+          <h1 className="text-2xl font-extrabold text-slate-900">FlowCV Templates Gallery</h1>
+          <p className="text-xs text-slate-500">Choose from 10 Resume Templates and 10 Cover Letter Templates.</p>
         </div>
 
         {/* Tab Toggle */}
@@ -144,7 +186,7 @@ export default function TemplatesPage({ resume, setResume, onNavigate }) {
             }`}
           >
             <FileText className="w-4 h-4" />
-            <span>Resume Templates ({resumeTemplates.length})</span>
+            <span>Resume Templates (10)</span>
           </button>
           <button
             onClick={() => setActiveType('cover_letters')}
@@ -155,7 +197,7 @@ export default function TemplatesPage({ resume, setResume, onNavigate }) {
             }`}
           >
             <Mail className="w-4 h-4" />
-            <span>Cover Letter Templates ({coverLetterTemplates.length})</span>
+            <span>Cover Letter Templates (10)</span>
           </button>
         </div>
       </div>

@@ -7,7 +7,6 @@ import CoverLetterBuilder from './pages/CoverLetterBuilder';
 import TemplatesPage from './pages/TemplatesPage';
 import ResumeBuilder from './pages/ResumeBuilder';
 import AICareerAssistant from './pages/AICareerAssistant';
-import SettingsPage from './pages/SettingsPage';
 import { api } from './services/api';
 import { Menu, Sparkles } from 'lucide-react';
 
@@ -150,12 +149,6 @@ export default function App() {
           {activeTab === 'assistant' && (
             <AICareerAssistant
               resume={resume}
-            />
-          )}
-
-          {activeTab === 'settings' && (
-            <SettingsPage
-              user={user}
             />
           )}
         </main>

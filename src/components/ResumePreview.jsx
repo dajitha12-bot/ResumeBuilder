@@ -1,5 +1,5 @@
 import React from 'react';
-import { Mail, Phone, MapPin, Linkedin, Github, Globe, Calendar } from 'lucide-react';
+import { Mail, Phone, MapPin, Linkedin, Github, Globe, Calendar, Camera } from 'lucide-react';
 
 export default function ResumePreview({ resume, template = 'classic_serif', zoom = 100, onePage = true, customizeOptions }) {
   if (!resume) return <div className="p-8 text-center text-slate-400">No resume data loaded</div>;
@@ -26,7 +26,7 @@ export default function ResumePreview({ resume, template = 'classic_serif', zoom
     lineSpacing: '1.4',
     sectionSpacing: '14px',
     margins: '0.45in',
-    accentColor: '#0284c7', // Sky blue matching screenshot 1
+    accentColor: '#0284c7', // Sky blue matching FlowCV design
     onePage: true
   };
 
@@ -34,12 +34,48 @@ export default function ResumePreview({ resume, template = 'classic_serif', zoom
   const zoomScale = zoom / 100;
   const accentColor = options.accentColor || '#0284c7';
 
+  // Photo Frame Renderer: Blank dashed upload box if no photo is set
+  const renderPhotoFrame = (sizeClass = "w-20 h-20", roundedClass = "rounded-full") => {
+    const photoUrl = personalInfo.avatarUrl || personalInfo.avatar;
+    if (photoUrl) {
+      return (
+        <div className={`${sizeClass} ${roundedClass} overflow-hidden border-2 border-slate-300 shadow-sm shrink-0`}>
+          <img src={photoUrl} alt={personalInfo.fullName || "Profile"} className="w-full h-full object-cover" />
+        </div>
+      );
+    }
+    return (
+      <div className={`${sizeClass} ${roundedClass} border-2 border-dashed border-sky-400 bg-sky-50/80 flex flex-col items-center justify-center text-sky-600 hover:bg-sky-100/80 transition cursor-pointer shrink-0 shadow-sm`}>
+        <Camera className="w-4 h-4 mb-0.5 text-sky-600" />
+        <span className="text-[9px] font-bold tracking-tight">Add Photo</span>
+      </div>
+    );
+  };
+
   // Section Heading Helper
   const renderSectionTitle = (title) => {
     if (currentTemplate === 'minimal') {
       return (
         <div className="mb-2">
           <h2 className="font-extrabold text-xs uppercase tracking-wider text-slate-900 border-b border-slate-200 pb-0.5">
+            {title}
+          </h2>
+        </div>
+      );
+    }
+    if (currentTemplate === 'emerald_corporate') {
+      return (
+        <div className="mb-2">
+          <h2 className="font-bold text-sm border-b-2 border-emerald-600 text-emerald-800 pb-0.5 tracking-wide">
+            {title}
+          </h2>
+        </div>
+      );
+    }
+    if (currentTemplate === 'coral_modern') {
+      return (
+        <div className="mb-2">
+          <h2 className="font-bold text-sm border-b-2 border-rose-500 text-rose-700 pb-0.5 tracking-wide">
             {title}
           </h2>
         </div>
@@ -54,41 +90,43 @@ export default function ResumePreview({ resume, template = 'classic_serif', zoom
     );
   };
 
-  // Check if Two-Column template layout
-  if (currentTemplate === 'two_column') {
+  // TEMPLATE: TWO COLUMN COMPACT & CORAL MODERN (Sidebar Layout)
+  if (currentTemplate === 'two_column' || currentTemplate === 'coral_modern') {
+    const isCoral = currentTemplate === 'coral_modern';
     return (
       <div className="w-full overflow-auto flex justify-center py-4 bg-slate-200/80 min-h-screen">
         <div 
           id="resume-printable-area"
           style={{ transform: `scale(${zoomScale})`, transformOrigin: 'top center', padding: options.margins || '0.4in' }}
-          className="bg-white shadow-2xl rounded-sm text-slate-800 w-[794px] min-h-[1123px] grid grid-cols-12 text-[10.5px] leading-relaxed"
+          className="bg-white shadow-2xl rounded-sm text-slate-800 w-[794px] min-h-[1123px] grid grid-cols-12 text-[10.5px] leading-relaxed text-left"
         >
           {/* Left Column (4 cols) */}
-          <div className="col-span-4 bg-slate-50 p-5 border-r border-slate-200 space-y-4">
-            <div className="text-center space-y-2">
-              <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-slate-300 mx-auto bg-slate-200">
-                <img src={personalInfo.avatar || "https://api.dicebear.com/7.x/avataaars/svg?seed=Ajitha"} alt="Avatar" className="w-full h-full object-cover" />
-              </div>
+          <div className={`col-span-4 p-5 border-r space-y-4 ${isCoral ? 'bg-rose-50/50 border-rose-200' : 'bg-slate-50 border-slate-200'}`}>
+            <div className="flex flex-col items-center text-center space-y-2">
+              {renderPhotoFrame("w-24 h-24", "rounded-full")}
               <h1 className="font-bold text-base text-slate-900 leading-tight">{personalInfo.fullName || 'Ajitha D R'}</h1>
-              <p className="text-xs italic font-medium text-sky-700">{personalInfo.subtitle || resume.targetRole}</p>
+              <p className={`text-xs italic font-medium ${isCoral ? 'text-rose-600' : 'text-sky-700'}`}>
+                {personalInfo.subtitle || resume.targetRole}
+              </p>
             </div>
 
             {/* Contact */}
-            <div className="space-y-1 pt-2 border-t border-slate-200 text-[10px]">
-              <strong className="text-slate-900 font-bold block uppercase tracking-wider mb-1">Contact</strong>
-              {personalInfo.email && <div className="truncate">{personalInfo.email}</div>}
-              {personalInfo.phone && <div>{personalInfo.phone}</div>}
-              {personalInfo.location && <div>{personalInfo.location}</div>}
-              {personalInfo.github && <div className="truncate text-sky-700">{personalInfo.github}</div>}
-              {personalInfo.linkedin && <div className="truncate text-sky-700">{personalInfo.linkedin.replace('https://', '')}</div>}
+            <div className="space-y-1.5 pt-3 border-t border-slate-200 text-[10px]">
+              <strong className="text-slate-900 font-bold block uppercase tracking-wider mb-1">Contact Details</strong>
+              {personalInfo.email && <div className="truncate">✉ {personalInfo.email}</div>}
+              {personalInfo.phone && <div>📞 {personalInfo.phone}</div>}
+              {personalInfo.location && <div>📍 {personalInfo.location}</div>}
+              {personalInfo.github && <div className="truncate font-semibold text-sky-700">💻 {personalInfo.github}</div>}
+              {personalInfo.linkedin && <div className="truncate font-semibold text-sky-700">🔗 {personalInfo.linkedin.replace('https://', '')}</div>}
             </div>
 
             {/* Skills */}
             {skills && (
-              <div className="space-y-1.5 pt-2 border-t border-slate-200">
-                <strong className="text-slate-900 font-bold block uppercase tracking-wider mb-1">Skills</strong>
-                {skills.languages?.length > 0 && <div><strong className="block text-[10px]">Languages:</strong> {skills.languages.join(', ')}</div>}
-                {skills.frameworks?.length > 0 && <div><strong className="block text-[10px]">Frameworks:</strong> {skills.frameworks.join(', ')}</div>}
+              <div className="space-y-2 pt-3 border-t border-slate-200">
+                <strong className="text-slate-900 font-bold block uppercase tracking-wider">Technical Skills</strong>
+                {skills.languages?.length > 0 && <div><strong className="block text-[10px] text-slate-700">Languages:</strong> {skills.languages.join(', ')}</div>}
+                {skills.frameworks?.length > 0 && <div><strong className="block text-[10px] text-slate-700">Frameworks:</strong> {skills.frameworks.join(', ')}</div>}
+                {skills.developerTools?.length > 0 && <div><strong className="block text-[10px] text-slate-700">Developer Tools:</strong> {skills.developerTools.join(', ')}</div>}
               </div>
             )}
           </div>
@@ -98,35 +136,43 @@ export default function ResumePreview({ resume, template = 'classic_serif', zoom
             {summary && (
               <div>
                 {renderSectionTitle('Career Objective')}
-                <p className="text-slate-700">{summary}</p>
+                <p className="text-slate-700 leading-relaxed text-justify">{summary}</p>
               </div>
             )}
 
-            {education?.length > 0 && (
+            {/* Education Timeline */}
+            {education.length > 0 && (
               <div>
                 {renderSectionTitle('Education')}
-                <div className="space-y-2">
+                <div className="space-y-2.5">
                   {education.map((edu, i) => (
                     <div key={i} className="flex justify-between items-start">
                       <div>
-                        <strong className="font-bold text-slate-900 block">{edu.degree}</strong>
-                        <span className="text-slate-600">{edu.institution}</span>
+                        <h3 className="font-bold text-slate-900 text-[11px]">{edu.degree}</h3>
+                        <p className="text-slate-600 italic text-[10px]">{edu.institution}</p>
+                        {edu.details && <p className="text-slate-500 text-[9.5px] mt-0.5">{edu.details}</p>}
                       </div>
-                      <span className="text-sky-700 font-medium italic">{edu.year}</span>
+                      <span className="text-[9.5px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+                        {edu.year}
+                      </span>
                     </div>
                   ))}
                 </div>
               </div>
             )}
 
-            {projects?.length > 0 && (
+            {/* Projects */}
+            {projects.length > 0 && (
               <div>
                 {renderSectionTitle('Projects')}
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {projects.map((proj, i) => (
                     <div key={i}>
-                      <span className="font-bold text-slate-900 block">{proj.name}</span>
-                      <p className="text-slate-700 text-[10px]">{proj.description}</p>
+                      <div className="flex justify-between items-start">
+                        <h3 className="font-bold text-slate-900 text-[11px]">{proj.name}</h3>
+                        {proj.duration && <span className="text-[9.5px] font-semibold text-slate-500">{proj.duration}</span>}
+                      </div>
+                      <p className="text-slate-600 text-[10px] mt-0.5">{proj.description}</p>
                     </div>
                   ))}
                 </div>
@@ -138,268 +184,153 @@ export default function ResumePreview({ resume, template = 'classic_serif', zoom
     );
   }
 
-  // Single-Column Layouts (Classic Serif, Modern, Minimal, Executive, Fresher, Tech Lead, Creative)
+  // DEFAULT MAIN LAYOUT (Classic Serif, Modern, Minimal, Executive, Fresher, Developer, Creative, Emerald)
   return (
     <div className="w-full overflow-auto flex justify-center py-4 bg-slate-200/80 min-h-screen">
       <div 
         id="resume-printable-area"
-        style={{ 
-          transform: `scale(${zoomScale})`, 
-          transformOrigin: 'top center',
-          fontFamily: currentTemplate === 'classic_serif' || currentTemplate === 'academic' ? 'Georgia, Cambria, "Times New Roman", serif' : (options.fontFamily || 'Inter'),
-          fontSize: options.fontSize || '11px',
-          lineHeight: options.lineSpacing || '1.4',
-          padding: options.margins || '0.45in'
-        }}
-        className={`bg-white shadow-2xl rounded-sm text-slate-800 transition-all ${
-          onePage || options.onePage ? 'max-h-[1123px] overflow-hidden' : 'min-h-[1123px]'
-        } w-[794px] print:w-full print:shadow-none print:m-0 print:p-6 relative`}
+        style={{ transform: `scale(${zoomScale})`, transformOrigin: 'top center', padding: options.margins || '0.45in' }}
+        className="bg-white shadow-2xl rounded-sm text-slate-800 w-[794px] min-h-[1123px] flex flex-col justify-between text-[11px] leading-relaxed text-left font-sans"
       >
-        
-        {/* Header / Personal Information */}
-        <div className={`mb-5 pb-3 border-b border-slate-200 flex justify-between items-start ${
-          currentTemplate === 'executive' ? 'bg-slate-900 text-white p-5 rounded-t-xl border-none -mx-6 -mt-6 mb-5' : ''
-        }`}>
-          <div className="space-y-1 max-w-[500px]">
-            <h1 className="text-2xl font-bold tracking-tight" style={currentTemplate === 'executive' ? { color: '#ffffff' } : { color: accentColor }}>
-              {personalInfo.fullName || 'Ajitha D R'}
-            </h1>
-            <p className={`text-sm font-semibold italic ${currentTemplate === 'executive' ? 'text-sky-300' : 'text-sky-700'}`}>
-              {personalInfo.subtitle || resume.targetRole || 'B.Tech – Information Technology'}
-            </p>
-
-            <div className={`space-y-0.5 pt-1 text-[10.5px] ${currentTemplate === 'executive' ? 'text-slate-300' : 'text-slate-700'}`}>
-              {personalInfo.email && (
-                <div className="flex items-center gap-1.5">
-                  <Mail className="w-3 h-3 text-sky-500" />
-                  <span>{personalInfo.email}</span>
-                </div>
-              )}
-              {personalInfo.phone && (
-                <div className="flex items-center gap-1.5">
-                  <Phone className="w-3 h-3 text-sky-500" />
-                  <span>{personalInfo.phone}</span>
-                </div>
-              )}
-              {personalInfo.location && (
-                <div className="flex items-center gap-1.5">
-                  <MapPin className="w-3 h-3 text-sky-500" />
-                  <span>{personalInfo.location}</span>
-                </div>
-              )}
-              {personalInfo.github && (
-                <div className="flex items-center gap-1.5">
-                  <Github className="w-3 h-3 text-sky-500" />
-                  <a href={personalInfo.github} target="_blank" rel="noreferrer" className={currentTemplate === 'executive' ? 'text-sky-300 hover:underline' : 'text-sky-700 hover:underline'}>
-                    {personalInfo.github}
-                  </a>
-                </div>
-              )}
-              {personalInfo.linkedin && (
-                <div className="flex items-center gap-1.5">
-                  <Linkedin className="w-3 h-3 text-sky-500" />
-                  <a href={personalInfo.linkedin} target="_blank" rel="noreferrer" className={currentTemplate === 'executive' ? 'text-sky-300 hover:underline' : 'text-sky-700 hover:underline'}>
-                    {personalInfo.linkedin.replace('https://', '')}
-                  </a>
-                </div>
-              )}
-              {personalInfo.dob && (
-                <div className="flex items-center gap-1.5">
-                  <Calendar className="w-3 h-3 text-sky-500" />
-                  <span>{personalInfo.dob}</span>
-                </div>
-              )}
+        <div className="space-y-4">
+          
+          {/* Top Header Row with Name & Photo Upload Frame */}
+          <div className="flex justify-between items-center border-b border-slate-200 pb-4">
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight text-slate-900">{personalInfo.fullName || 'Ajitha D R'}</h1>
+              <p className="text-xs italic font-semibold text-sky-700 mt-0.5">{personalInfo.subtitle || 'B.Tech – Information Technology'}</p>
+              
+              {/* Contact Items Row */}
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-slate-600 mt-2">
+                {personalInfo.email && <span>✉ {personalInfo.email}</span>}
+                {personalInfo.phone && <span>📞 {personalInfo.phone}</span>}
+                {personalInfo.location && <span>📍 {personalInfo.location}</span>}
+                {personalInfo.dob && <span>🎂 DOB: {personalInfo.dob}</span>}
+              </div>
+              
+              <div className="flex flex-wrap items-center gap-x-3 text-[10px] text-sky-700 mt-1 font-medium">
+                {personalInfo.github && <span>💻 {personalInfo.github}</span>}
+                {personalInfo.linkedin && <span>🔗 {personalInfo.linkedin}</span>}
+              </div>
             </div>
+
+            {/* Photo Frame Container */}
+            {renderPhotoFrame("w-20 h-20", "rounded-full")}
           </div>
 
-          {/* Top Right Profile Avatar Photo */}
-          <div className="flex-shrink-0 pt-1">
-            <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-slate-200 shadow-md bg-slate-100 flex items-center justify-center">
-              {personalInfo.avatar ? (
-                <img 
-                  src={personalInfo.avatar} 
-                  alt="Ajitha D R" 
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = "https://api.dicebear.com/7.x/avataaars/svg?seed=Ajitha";
-                  }}
-                />
-              ) : (
-                <span className="font-bold text-slate-400 text-xl">AD</span>
-              )}
+          {/* Career Objective */}
+          {summary && (
+            <div>
+              {renderSectionTitle('Career Objective')}
+              <p className="text-slate-700 text-[10.5px] leading-relaxed text-justify">{summary}</p>
             </div>
-          </div>
+          )}
+
+          {/* Education Timeline */}
+          {education.length > 0 && (
+            <div>
+              {renderSectionTitle('Education')}
+              <div className="space-y-2">
+                {education.map((edu, idx) => (
+                  <div key={idx} className="flex justify-between items-start">
+                    <div>
+                      <h3 className="font-bold text-slate-900 text-[11px]">{edu.degree}</h3>
+                      <p className="text-slate-600 italic text-[10px]">{edu.institution}</p>
+                      {edu.details && <p className="text-slate-500 text-[9.5px] mt-0.5">{edu.details}</p>}
+                    </div>
+                    <span className="text-[10px] font-semibold text-slate-600 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+                      {edu.year}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Technical Skills */}
+          {skills && (
+            <div>
+              {renderSectionTitle('Technical Skills')}
+              <div className="space-y-1 text-[10.5px]">
+                {skills.languages?.length > 0 && (
+                  <div><strong className="text-slate-900">Languages:</strong> {skills.languages.join(', ')}</div>
+                )}
+                {skills.frameworks?.length > 0 && (
+                  <div><strong className="text-slate-900">Frameworks / Libraries:</strong> {skills.frameworks.join(', ')}</div>
+                )}
+                {skills.webTechnologies?.length > 0 && (
+                  <div><strong className="text-slate-900">Web Technologies:</strong> {skills.webTechnologies.join(', ')}</div>
+                )}
+                {skills.developerTools?.length > 0 && (
+                  <div><strong className="text-slate-900">Developer Tools:</strong> {skills.developerTools.join(', ')}</div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Key Projects */}
+          {projects.length > 0 && (
+            <div>
+              {renderSectionTitle('Key Projects')}
+              <div className="space-y-2.5">
+                {projects.map((proj, idx) => (
+                  <div key={idx} className="space-y-0.5">
+                    <div className="flex justify-between items-baseline">
+                      <h3 className="font-bold text-slate-900 text-[11px]">{proj.name}</h3>
+                      {proj.duration && <span className="text-[9.5px] font-medium text-slate-500">{proj.duration}</span>}
+                    </div>
+                    {proj.description && <p className="text-slate-700 text-[10px]">{proj.description}</p>}
+                    {proj.bullets?.length > 0 && (
+                      <ul className="list-disc list-inside text-slate-600 text-[9.5px] space-y-0.5 ml-1">
+                        {proj.bullets.map((b, bi) => <li key={bi}>{b}</li>)}
+                      </ul>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Experience / Internships */}
+          {experience.length > 0 && (
+            <div>
+              {renderSectionTitle('Internships & Experience')}
+              <div className="space-y-2">
+                {experience.map((exp, idx) => (
+                  <div key={idx}>
+                    <div className="flex justify-between items-baseline">
+                      <h3 className="font-bold text-slate-900 text-[11px]">{exp.role}</h3>
+                      <span className="text-[9.5px] text-slate-500">{exp.duration}</span>
+                    </div>
+                    <p className="text-slate-600 italic text-[10px]">{exp.organization}</p>
+                    {exp.description && <p className="text-slate-600 text-[9.5px] mt-0.5">{exp.description}</p>}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Certifications & Achievements */}
+          {certifications.length > 0 && (
+            <div>
+              {renderSectionTitle('Certifications')}
+              <div className="space-y-1 text-[10px]">
+                {certifications.map((c, idx) => (
+                  <div key={idx} className="flex justify-between">
+                    <span className="font-semibold text-slate-800">• {c.title} — {c.issuer}</span>
+                    <span className="text-slate-500">{c.year}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* 1. Career Objective / Summary */}
-        {summary && (
-          <section style={{ marginBottom: options.sectionSpacing || '14px' }}>
-            {renderSectionTitle('Career Objective')}
-            <p className="text-slate-800 text-justify leading-relaxed">{summary}</p>
-          </section>
-        )}
-
-        {/* 2. Education (Timeline format) */}
-        {education?.length > 0 && (
-          <section style={{ marginBottom: options.sectionSpacing || '14px' }}>
-            {renderSectionTitle('Education')}
-            <div className="space-y-2">
-              {education.map((edu, i) => (
-                <div key={edu.id || i} className="grid grid-cols-12 gap-2 text-[10.5px]">
-                  <div className="col-span-3 text-sky-700 italic font-medium">
-                    {edu.year}
-                  </div>
-                  <div className="col-span-9 space-y-0.5">
-                    <div>
-                      <strong className="text-slate-900 font-bold">{edu.degree}</strong>
-                      <span className="text-slate-700">, {edu.institution}</span>
-                    </div>
-                    {edu.cgpa && (
-                      <div className="text-slate-600 text-[10px] font-medium">{edu.cgpa}</div>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* 3. Technical Skills */}
-        {skills && Object.keys(skills).length > 0 && (
-          <section style={{ marginBottom: options.sectionSpacing || '14px' }}>
-            {renderSectionTitle('Technical Skills')}
-            <div className="space-y-1.5 text-[10.5px]">
-              {skills.languages?.length > 0 && (
-                <div>
-                  <strong className="text-slate-900 font-semibold block mb-0.5">Languages:</strong>
-                  <div className="flex flex-wrap gap-1">
-                    {skills.languages.map((sk, idx) => (
-                      <span key={idx} className="px-2 py-0.5 bg-sky-50 text-sky-800 border border-sky-200 rounded text-[10px] font-medium">
-                        {sk}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-              {skills.frameworks?.length > 0 && (
-                <div className="pt-1">
-                  <strong className="text-slate-900 font-semibold block mb-0.5">Frameworks & Libraries:</strong>
-                  <div className="flex flex-wrap gap-1">
-                    {skills.frameworks.map((sk, idx) => (
-                      <span key={idx} className="px-2 py-0.5 bg-slate-100 text-slate-800 border border-slate-200 rounded text-[10px] font-medium">
-                        {sk}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-              {skills.databases?.length > 0 && (
-                <div className="pt-1">
-                  <strong className="text-slate-900 font-semibold block mb-0.5">Databases & Tools:</strong>
-                  <div className="flex flex-wrap gap-1">
-                    {skills.databases.concat(skills.tools || []).map((sk, idx) => (
-                      <span key={idx} className="px-2 py-0.5 bg-slate-100 text-slate-800 border border-slate-200 rounded text-[10px] font-medium">
-                        {sk}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </section>
-        )}
-
-        {/* 4. Areas of Interest */}
-        {areasOfInterest?.length > 0 && (
-          <section style={{ marginBottom: options.sectionSpacing || '14px' }}>
-            {renderSectionTitle('Areas of Interest')}
-            <div className="flex flex-wrap gap-1.5 text-[10.5px]">
-              {areasOfInterest.map((interest, i) => (
-                <span key={i} className="px-2.5 py-0.5 bg-slate-100 text-slate-800 rounded-md font-semibold border border-slate-200">
-                  {interest}
-                </span>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* 5. Key Projects */}
-        {projects?.length > 0 && (
-          <section style={{ marginBottom: options.sectionSpacing || '14px' }}>
-            {renderSectionTitle('Projects')}
-            <div className="space-y-2.5">
-              {projects.map((proj, i) => (
-                <div key={proj.id || i}>
-                  <div className="flex justify-between items-baseline">
-                    <span className="font-bold text-slate-900 text-[11px]">{proj.name}</span>
-                    {proj.technologies?.length > 0 && (
-                      <span className="text-[9.5px] text-sky-700 font-medium italic">
-                        {proj.technologies.join(' • ')}
-                      </span>
-                    )}
-                  </div>
-                  {proj.description && (
-                    <p className="text-slate-700 text-[10.5px] mt-0.5 text-justify leading-relaxed">{proj.description}</p>
-                  )}
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* 6. Experience */}
-        {experience?.length > 0 && (
-          <section style={{ marginBottom: options.sectionSpacing || '14px' }}>
-            {renderSectionTitle('Experience')}
-            <div className="space-y-2">
-              {experience.map((exp, i) => (
-                <div key={exp.id || i}>
-                  <div className="flex justify-between items-baseline font-bold text-slate-900">
-                    <span>{exp.role} — <span style={{ color: accentColor }}>{exp.organization}</span></span>
-                    <span className="text-[10px] text-slate-500 font-normal">{exp.duration}</span>
-                  </div>
-                  {exp.description && (
-                    <p className="text-slate-700 text-[10.5px] mt-0.5 leading-relaxed">{exp.description}</p>
-                  )}
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* 7. Certifications */}
-        {certifications?.length > 0 && (
-          <section style={{ marginBottom: options.sectionSpacing || '14px' }}>
-            {renderSectionTitle('Certifications')}
-            <div className="grid grid-cols-2 gap-2 text-[10.5px]">
-              {certifications.map((cert, i) => (
-                <div key={cert.id || i} className="flex justify-between border-b border-slate-100 pb-1">
-                  <div>
-                    <strong className="text-slate-900 block font-semibold">{cert.name}</strong>
-                    <span className="text-slate-500 text-[9.5px]">{cert.organization}</span>
-                  </div>
-                  <span className="text-sky-700 text-[9.5px] italic">{cert.date}</span>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* 8. Achievements */}
-        {achievements?.length > 0 && (
-          <section style={{ marginBottom: options.sectionSpacing || '14px' }}>
-            {renderSectionTitle('Achievements')}
-            <ul className="list-disc list-inside text-[10.5px] space-y-0.5 text-slate-700">
-              {achievements.map((ach, i) => (
-                <li key={ach.id || i}>
-                  <strong className="text-slate-900">{ach.title}:</strong> {ach.description}
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
-
+        {/* Footer info line */}
+        <div className="pt-4 border-t border-slate-100 text-[9px] text-slate-400 flex justify-between">
+          <span>{personalInfo.fullName || 'Ajitha D R'} — Resume</span>
+          <span>FlowCV Template Engine</span>
+        </div>
       </div>
     </div>
   );
