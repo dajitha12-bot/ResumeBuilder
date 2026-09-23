@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
 import { Palette, CheckCircle2, ArrowRight, Mail, FileText } from 'lucide-react';
+import { StorageService } from '../services/storageService';
 
-export default function TemplatesPage({ resume, setResume, onNavigate }) {
+export default function TemplatesPage({ resume, setResume, onNavigate, onEditCoverLetter }) {
   const [activeType, setActiveType] = useState('resumes'); // 'resumes' | 'cover_letters'
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedLetterTemplate, setSelectedLetterTemplate] = useState(null);
+  const [newLetterName, setNewLetterName] = useState('');
 
   const resumeTemplates = [
     {
       id: 'classic_serif',
       title: 'FlowCV Classic Serif',
       badge: 'Blue Underline Titles',
-      desc: 'Serif typography with solid blue underline section headers, right photo avatar, and timeline education.',
+      desc: 'Serif typography with solid blue underline section headers, photo upload frame, and timeline education.',
       previewBg: 'font-serif bg-white border-b-2 border-sky-600'
     },
     {
@@ -79,39 +83,46 @@ export default function TemplatesPage({ resume, setResume, onNavigate }) {
 
   const coverLetterTemplates = [
     {
-      id: 'desert_rock',
-      title: 'Desert Rock',
-      badge: 'Two-Column Layout',
-      desc: 'Warm beige left sidebar with photo frame, sender details, and right letter body column.',
-      previewBg: 'bg-[#e8e0d5] border border-[#d4c8b8]'
-    },
-    {
-      id: 'gold_minimal',
-      title: 'Gold Minimal',
-      badge: 'Border Frame',
-      desc: 'Gold border frame with top inline header, photo upload frame, and gold accent dividers.',
-      previewBg: 'bg-white border-2 border-[#d4af37]'
-    },
-    {
-      id: 'hunter_green',
-      title: 'Hunter Green',
-      badge: 'Multi-Column',
-      desc: 'Sage green left sidebar for contact details and photo; crisp white letter column right.',
-      previewBg: 'bg-[#2b4c3f] text-white border border-[#1e382e]'
+      id: 'modern_blue',
+      title: 'Modern Sky Blue',
+      badge: 'Sky Blue Accent',
+      desc: 'Sky blue accent line header, photo upload space, recipient box, and formal typography.',
+      previewBg: 'border-t-4 border-sky-600 bg-white'
     },
     {
       id: 'viola_purple',
-      title: 'Viola Purple',
-      badge: 'Top Banner Band',
+      title: 'Viola Dark Purple',
+      badge: 'Dark Purple Banner',
       desc: 'Dark purple top header band with photo frame & white text; white letter body below.',
       previewBg: 'bg-[#3b1e3e] text-white border border-purple-900'
     },
     {
-      id: 'modern_blue',
-      title: 'Modern Blue',
-      badge: 'Clean Blue Accent',
-      desc: 'Sky blue accent line header, photo frame, recipient box, and formal typography.',
-      previewBg: 'border-t-4 border-sky-600 bg-white'
+      id: 'hunter_green',
+      title: 'Hunter Sage Green',
+      badge: 'Sage Green Sidebar',
+      desc: 'Sage green left sidebar for contact details and photo; crisp white letter column right.',
+      previewBg: 'bg-[#2b4c3f] text-white border border-[#1e382e]'
+    },
+    {
+      id: 'coral_pink',
+      title: 'Coral Pink Accent',
+      badge: 'Coral Pink Modern',
+      desc: 'Coral pink top header underline and photo frame for modern tech applications.',
+      previewBg: 'border-t-4 border-rose-500 bg-white'
+    },
+    {
+      id: 'gold_minimal',
+      title: 'Gold Minimal',
+      badge: 'Gold Frame',
+      desc: 'Gold border frame with top inline header, photo upload frame, and gold accent dividers.',
+      previewBg: 'bg-white border-2 border-[#d4af37]'
+    },
+    {
+      id: 'desert_rock',
+      title: 'Desert Rock',
+      badge: 'Warm Beige Sidebar',
+      desc: 'Warm beige left sidebar with photo frame, sender details, and right letter body column.',
+      previewBg: 'bg-[#e8e0d5] border border-[#d4c8b8]'
     },
     {
       id: 'executive_classic',
@@ -119,13 +130,6 @@ export default function TemplatesPage({ resume, setResume, onNavigate }) {
       badge: 'Formal Serif',
       desc: 'Formal serif typography with centered header for executive applications.',
       previewBg: 'font-serif bg-white border-b border-slate-400'
-    },
-    {
-      id: 'coral_pink',
-      title: 'Coral Pink Accent',
-      badge: 'Coral Modern',
-      desc: 'Coral pink top header underline and photo frame for modern applications.',
-      previewBg: 'border-t-4 border-rose-500 bg-white'
     },
     {
       id: 'teal_slate',
@@ -136,7 +140,7 @@ export default function TemplatesPage({ resume, setResume, onNavigate }) {
     },
     {
       id: 'corporate_navy',
-      title: 'Corporate Navy',
+      title: 'Corporate Dark Navy',
       badge: 'Navy Banner',
       desc: 'Dark navy blue top header band with photo frame and crisp white body.',
       previewBg: 'bg-slate-900 text-white border border-slate-950'
@@ -155,8 +159,49 @@ export default function TemplatesPage({ resume, setResume, onNavigate }) {
     if (onNavigate) onNavigate('builder');
   };
 
-  const handleApplyCoverLetter = (templateId) => {
-    if (onNavigate) onNavigate('cover-letters');
+  const handleOpenCoverLetterModal = (template) => {
+    setSelectedLetterTemplate(template);
+    setNewLetterName(`${template.title} Cover Letter`);
+    setModalOpen(true);
+  };
+
+  const handleCreateCoverLetterFromTemplate = (e) => {
+    e.preventDefault();
+    if (!newLetterName.trim() || !selectedLetterTemplate) return;
+
+    const newRecord = StorageService.createRecord('cover_letters', {
+      name: newLetterName.trim(),
+      template: selectedLetterTemplate.id,
+      sender: {
+        fullName: 'Ajitha D R',
+        jobTitle: 'B.Tech – Information Technology',
+        email: 'dajitha12@gmail.com',
+        phone: '6374784776',
+        location: 'Aruppukottai, Virudhunagar District, Tamil Nadu',
+        avatarUrl: '',
+        linkedin: 'linkedin.com/in/ajitha-d-r-b3697b323',
+        github: 'https://github.com/dajitha12-bot'
+      },
+      recipient: {
+        hiringManager: 'Hiring Manager',
+        company: 'Target Company',
+        address: 'Company Location, Country',
+        date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+      },
+      salutation: 'Dear Hiring Manager,',
+      opening: 'I am excited to apply for the position at your company. With a strong background in software engineering and web development, I am confident in my ability to add immediate value to your team.',
+      body: [
+        'Throughout my academic career at National Engineering College, I have gained hands-on experience in building modern web applications, scalable backend APIs, and responsive UI components.',
+        'I am impressed by your company\'s commitment to innovation and look forward to contributing my technical skills and enthusiasm to your projects.'
+      ],
+      closing: 'Thank you for considering my application. I welcome the opportunity to discuss my qualifications further in an interview.',
+      signoff: 'Sincerely,',
+      signature: 'Ajitha D R'
+    }, 'cl');
+
+    setModalOpen(false);
+    if (onEditCoverLetter) onEditCoverLetter(newRecord.id);
+    if (onNavigate) onNavigate('cover-letter-builder');
   };
 
   const activeResumeTemplate = resume?.template || 'classic_serif';
@@ -172,7 +217,7 @@ export default function TemplatesPage({ resume, setResume, onNavigate }) {
             <span>FlowCV Template Gallery</span>
           </div>
           <h1 className="text-2xl font-extrabold text-slate-900">FlowCV Templates Gallery</h1>
-          <p className="text-xs text-slate-500">Choose from 10 Resume Templates and 10 Cover Letter Templates.</p>
+          <p className="text-xs text-slate-500">Choose matching Resume and Cover Letter templates with rich color themes.</p>
         </div>
 
         {/* Tab Toggle */}
@@ -278,14 +323,60 @@ export default function TemplatesPage({ resume, setResume, onNavigate }) {
               </div>
 
               <button
-                onClick={() => handleApplyCoverLetter(tpl.id)}
+                onClick={() => handleOpenCoverLetterModal(tpl)}
                 className="w-full py-2.5 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 bg-sky-600 hover:bg-sky-700 text-white shadow-sm transition"
               >
-                <span>Create Cover Letter With This Template</span>
+                <span>Use This Template</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* CREATE COVER LETTER FROM TEMPLATE MODAL */}
+      {modalOpen && selectedLetterTemplate && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-5">
+            <div className="flex justify-between items-center border-b pb-3">
+              <h3 className="text-lg font-bold text-slate-800">
+                Create Cover Letter with {selectedLetterTemplate.title}
+              </h3>
+              <button onClick={() => setModalOpen(false)} className="text-slate-400 hover:text-slate-600 font-bold">
+                ✕
+              </button>
+            </div>
+            <form onSubmit={handleCreateCoverLetterFromTemplate} className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">
+                  Cover Letter Name / Target Position
+                </label>
+                <input
+                  type="text"
+                  value={newLetterName}
+                  onChange={(e) => setNewLetterName(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm"
+                  autoFocus
+                  required
+                />
+              </div>
+              <div className="flex justify-end gap-3 pt-2 border-t">
+                <button
+                  type="button"
+                  onClick={() => setModalOpen(false)}
+                  className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 text-xs font-semibold text-white bg-sky-600 hover:bg-sky-700 rounded-xl shadow"
+                >
+                  Create & Open Editor
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
 

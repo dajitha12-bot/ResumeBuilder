@@ -2,10 +2,22 @@ import React, { useState, useEffect } from 'react';
 import { StorageService } from '../services/storageService';
 import CoverLetterPreview from '../components/CoverLetterPreview';
 
+const TEMPLATE_OPTIONS = [
+  { id: 'modern_blue', name: 'Modern Blue', colorBg: 'bg-sky-600', desc: 'Sky Blue Accent Header Line' },
+  { id: 'viola_purple', name: 'Viola Purple', colorBg: 'bg-purple-900', desc: 'Dark Purple Header Band' },
+  { id: 'hunter_green', name: 'Hunter Green', colorBg: 'bg-emerald-800', desc: 'Sage Green Sidebar' },
+  { id: 'coral_pink', name: 'Coral Pink', colorBg: 'bg-rose-500', desc: 'Coral Pink Header' },
+  { id: 'gold_minimal', name: 'Gold Minimal', colorBg: 'bg-amber-500', desc: 'Gold Border Frame' },
+  { id: 'desert_rock', name: 'Desert Rock', colorBg: 'bg-[#d6c5b3]', desc: 'Warm Beige Sidebar' },
+  { id: 'teal_slate', name: 'Teal Slate', colorBg: 'bg-teal-900', desc: 'Teal Split Column' },
+  { id: 'corporate_navy', name: 'Corporate Navy', colorBg: 'bg-slate-900', desc: 'Dark Navy Top Banner' }
+];
+
 export default function MyCoverLetters({ onNavigate, onEditLetter }) {
   const [coverLetters, setCoverLetters] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newLetterName, setNewLetterName] = useState('');
+  const [selectedTemplate, setSelectedTemplate] = useState('modern_blue');
   const [editingLetter, setEditingLetter] = useState(null);
   const [renameModalOpen, setRenameModalOpen] = useState(false);
 
@@ -22,12 +34,9 @@ export default function MyCoverLetters({ onNavigate, onEditLetter }) {
     e.preventDefault();
     if (!newLetterName.trim()) return;
 
-    const colorTemplates = ['modern_blue', 'viola_purple', 'coral_pink', 'hunter_green', 'desert_rock', 'gold_minimal'];
-    const randomTemplate = colorTemplates[coverLetters.length % colorTemplates.length];
-
     const newRecord = StorageService.createRecord('cover_letters', {
       name: newLetterName.trim(),
-      template: randomTemplate,
+      template: selectedTemplate || 'modern_blue',
       sender: {
         fullName: 'Ajitha D R',
         jobTitle: 'B.Tech – Information Technology',
@@ -154,7 +163,7 @@ export default function MyCoverLetters({ onNavigate, onEditLetter }) {
               {/* Thumbnail Container */}
               <div className="h-64 bg-slate-50 p-4 relative overflow-hidden flex justify-center border-b border-slate-100">
                 <div className="transform scale-[0.35] origin-top w-[800px] pointer-events-none select-none shadow-sm">
-                  <CoverLetterPreview data={letter} template={letter.template || 'desert_rock'} />
+                  <CoverLetterPreview data={letter} template={letter.template || 'modern_blue'} />
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
                   <span className="px-4 py-2 bg-slate-900/80 text-white font-medium text-xs rounded-lg backdrop-blur shadow">
@@ -174,8 +183,8 @@ export default function MyCoverLetters({ onNavigate, onEditLetter }) {
                       Target: <span className="font-semibold text-slate-600">{letter.recipient?.company || 'General'}</span>
                     </p>
                   </div>
-                  <span className="text-[10px] font-semibold uppercase tracking-wider px-2 py-1 rounded bg-sky-50 text-sky-700 border border-sky-100">
-                    {letter.template || 'desert_rock'}
+                  <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-sky-50 text-sky-700 border border-sky-100">
+                    {(letter.template || 'modern_blue').replace('_', ' ')}
                   </span>
                 </div>
 
@@ -211,24 +220,24 @@ export default function MyCoverLetters({ onNavigate, onEditLetter }) {
         </div>
       )}
 
-      {/* CREATE NEW MODAL */}
+      {/* CREATE NEW MODAL WITH COLOR TEMPLATE PICKER */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-5 animate-in fade-in zoom-in duration-150">
+          <div className="bg-white rounded-2xl shadow-xl max-w-lg w-full p-6 space-y-5 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center border-b pb-3">
               <h3 className="text-lg font-bold text-slate-800">Create New Cover Letter</h3>
               <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600 font-bold">
                 ✕
               </button>
             </div>
-            <form onSubmit={handleCreateNew} className="space-y-4">
+            <form onSubmit={handleCreateNew} className="space-y-5">
               <div>
                 <label className="block text-xs font-semibold text-slate-600 mb-1">
                   Cover Letter Name / Target Position
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. Full Stack Developer - Google"
+                  placeholder="e.g. Software Engineer - Meta"
                   value={newLetterName}
                   onChange={(e) => setNewLetterName(e.target.value)}
                   className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm"
@@ -236,7 +245,37 @@ export default function MyCoverLetters({ onNavigate, onEditLetter }) {
                   required
                 />
               </div>
-              <div className="flex justify-end gap-3 pt-2">
+
+              {/* Template Color Selection Grid */}
+              <div className="space-y-2">
+                <label className="block text-xs font-bold text-slate-700">
+                  Select Cover Letter Template Theme
+                </label>
+                <div className="grid grid-cols-2 gap-2.5">
+                  {TEMPLATE_OPTIONS.map((tmpl) => {
+                    const isSelected = selectedTemplate === tmpl.id;
+                    return (
+                      <div
+                        key={tmpl.id}
+                        onClick={() => setSelectedTemplate(tmpl.id)}
+                        className={`p-3 rounded-xl border-2 cursor-pointer transition flex items-center space-x-3 ${
+                          isSelected
+                            ? 'border-sky-600 bg-sky-50/60 shadow-sm'
+                            : 'border-slate-200 hover:border-slate-300 bg-white'
+                        }`}
+                      >
+                        <div className={`w-6 h-6 rounded-full ${tmpl.colorBg} shrink-0 shadow-inner`} />
+                        <div className="overflow-hidden text-left">
+                          <p className="font-bold text-xs text-slate-800 truncate">{tmpl.name}</p>
+                          <p className="text-[10px] text-slate-500 truncate">{tmpl.desc}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3 pt-3 border-t">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
@@ -248,7 +287,7 @@ export default function MyCoverLetters({ onNavigate, onEditLetter }) {
                   type="submit"
                   className="px-5 py-2 text-xs font-semibold text-white bg-sky-600 hover:bg-sky-700 rounded-xl shadow"
                 >
-                  Create & Edit
+                  Create Cover Letter
                 </button>
               </div>
             </form>

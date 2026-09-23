@@ -132,6 +132,7 @@ export default function App() {
               resume={resume}
               setResume={setResume}
               onNavigate={setActiveTab}
+              onEditCoverLetter={(id) => setSelectedCoverLetterId(id)}
             />
           )}
 
