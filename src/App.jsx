@@ -24,8 +24,8 @@ export default function App() {
 
   const handleNavigate = (tab, subType) => {
     setActiveTab(tab);
-    if (subType) {
-      setTemplateType(subType);
+    if (tab === 'templates') {
+      setTemplateType(subType || 'resumes');
     }
   };
 
@@ -137,10 +137,12 @@ export default function App() {
 
           {activeTab === 'templates' && (
             <TemplatesPage
+              key={`tpl_${templateType}`}
               resume={resume}
               setResume={setResume}
               onNavigate={handleNavigate}
               initialType={templateType}
+              onTypeChange={setTemplateType}
               onEditCoverLetter={(id) => setSelectedCoverLetterId(id)}
             />
           )}

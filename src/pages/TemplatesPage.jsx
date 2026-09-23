@@ -57,7 +57,7 @@ const SAMPLE_COVER_LETTER = {
   signature: 'Brian T. Wayne'
 };
 
-export default function TemplatesPage({ resume, setResume, onNavigate, onEditCoverLetter, initialType = 'resumes' }) {
+export default function TemplatesPage({ resume, setResume, onNavigate, onEditCoverLetter, initialType = 'resumes', onTypeChange }) {
   const [activeType, setActiveType] = useState(initialType);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedLetterTemplate, setSelectedLetterTemplate] = useState(null);
@@ -68,6 +68,13 @@ export default function TemplatesPage({ resume, setResume, onNavigate, onEditCov
       setActiveType(initialType);
     }
   }, [initialType]);
+
+  const handleTabChange = (type) => {
+    setActiveType(type);
+    if (onTypeChange) {
+      onTypeChange(type);
+    }
+  };
 
   const resumeTemplates = [
     { id: 'classic_serif', title: 'CLASSIC SERIF · BLUE UNDERLINE RESUME', category: 'Classic' },
@@ -166,7 +173,7 @@ export default function TemplatesPage({ resume, setResume, onNavigate, onEditCov
         {/* Tab Toggle (Resumes first, Cover Letters second) */}
         <div className="flex bg-slate-100 p-1.5 rounded-2xl border border-slate-200">
           <button
-            onClick={() => setActiveType('resumes')}
+            onClick={() => handleTabChange('resumes')}
             className={`px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center space-x-2 ${
               activeType === 'resumes'
                 ? 'bg-white text-sky-600 shadow-sm font-extrabold'
@@ -178,7 +185,7 @@ export default function TemplatesPage({ resume, setResume, onNavigate, onEditCov
           </button>
 
           <button
-            onClick={() => setActiveType('cover_letters')}
+            onClick={() => handleTabChange('cover_letters')}
             className={`px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center space-x-2 ${
               activeType === 'cover_letters'
                 ? 'bg-white text-sky-600 shadow-sm font-extrabold'
