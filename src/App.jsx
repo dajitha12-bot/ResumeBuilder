@@ -4,8 +4,6 @@ import Dashboard from './pages/Dashboard';
 import MyResumes from './pages/MyResumes';
 import TemplatesPage from './pages/TemplatesPage';
 import ResumeBuilder from './pages/ResumeBuilder';
-import JobAnalyzerATS from './pages/JobAnalyzerATS';
-import CareerVault from './pages/CareerVault';
 import AICareerAssistant from './pages/AICareerAssistant';
 import SettingsPage from './pages/SettingsPage';
 import { api } from './services/api';
@@ -70,7 +68,7 @@ export default function App() {
         setMobileOpen={setMobileOpen}
       />
 
-      {/* Main Content Area (Offset by 64 / 256px on desktop) */}
+      {/* Main Content Area */}
       <div className="flex-1 lg:pl-64 flex flex-col min-w-0 min-h-screen">
         
         {/* Mobile Header Bar */}
@@ -126,23 +124,9 @@ export default function App() {
               resume={resume}
               setResume={setResume}
               truthStatus={truthStatus}
+              versions={versions}
+              setVersions={setVersions}
               onRefreshTruth={() => api.verifyClaims('user_001', resume).then(setTruthStatus)}
-            />
-          )}
-
-          {activeTab === 'job-analyzer' && (
-            <JobAnalyzerATS
-              resume={resume}
-              setResume={setResume}
-              vaultItems={vaultItems}
-              onNavigate={setActiveTab}
-            />
-          )}
-
-          {activeTab === 'career-vault' && (
-            <CareerVault
-              vaultItems={vaultItems}
-              setVaultItems={setVaultItems}
             />
           )}
 
@@ -162,8 +146,8 @@ export default function App() {
         {/* Footer */}
         <footer className="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
           <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-            <span>© 2026 AI Resume Builder & Career Vault Platform</span>
-            <span className="font-semibold text-brand-600">Ajitha D R — National Engineering College Demo</span>
+            <span>© 2026 AI Resume Builder — FlowCV Engine</span>
+            <span className="font-semibold text-brand-600">Ajitha D R — National Engineering College</span>
           </div>
         </footer>
 

@@ -4,8 +4,6 @@ import {
   FileText, 
   Palette, 
   Edit3, 
-  Search, 
-  FolderKanban, 
   Bot, 
   Settings, 
   Sparkles, 
@@ -18,10 +16,7 @@ export default function Sidebar({ activeTab, setActiveTab, user, truthStatus, mo
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, badge: null },
     { id: 'my-resumes', label: 'My Resumes', icon: FileText, badge: '3' },
-    { id: 'templates', label: 'Templates', icon: Palette, badge: '6' },
-    { id: 'builder', label: 'Resume Builder', icon: Edit3, badge: null },
-    { id: 'job-analyzer', label: 'AI Job & ATS', icon: Search, badge: 'ATS' },
-    { id: 'career-vault', label: 'Career Vault', icon: FolderKanban, badge: 'Vault' },
+    { id: 'templates', label: 'Templates', icon: Palette, badge: '8' },
     { id: 'assistant', label: 'AI Assistant', icon: Bot, badge: 'AI' },
     { id: 'settings', label: 'Settings', icon: Settings, badge: null },
   ];
@@ -59,7 +54,7 @@ export default function Sidebar({ activeTab, setActiveTab, user, truthStatus, mo
               <span className="font-extrabold text-base text-slate-900 tracking-tight block leading-none">
                 AI Resume Builder
               </span>
-              <span className="text-[10px] text-brand-600 font-bold uppercase tracking-wider">Career & ATS Suite</span>
+              <span className="text-[10px] text-brand-600 font-bold uppercase tracking-wider">FlowCV Editor Engine</span>
             </div>
           </div>
         </div>
@@ -104,32 +99,8 @@ export default function Sidebar({ activeTab, setActiveTab, user, truthStatus, mo
           })}
         </nav>
 
-        {/* Truth Guard Status & User Profile Widget */}
+        {/* User Profile Card */}
         <div className="p-3 border-t border-slate-100 space-y-2 bg-slate-50/50">
-          
-          {/* Truth Status Indicator */}
-          <div 
-            onClick={() => handleNavClick('builder')}
-            className={`flex items-center justify-between p-2.5 rounded-xl text-xs font-semibold border cursor-pointer transition-all ${
-              truthStatus?.verified === false
-                ? 'bg-amber-50 text-amber-800 border-amber-200 hover:bg-amber-100'
-                : 'bg-emerald-50 text-emerald-800 border-emerald-200 hover:bg-emerald-100'
-            }`}
-          >
-            <div className="flex items-center space-x-2">
-              {truthStatus?.verified === false ? (
-                <ShieldAlert className="w-4 h-4 text-amber-600 flex-shrink-0" />
-              ) : (
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-              )}
-              <span className="text-[11px] font-bold">
-                {truthStatus?.verified === false ? `${truthStatus.unsupportedCount} Claim Alert(s)` : 'Truth Guard Verified'}
-              </span>
-            </div>
-            <ChevronRight className="w-3.5 h-3.5 opacity-60" />
-          </div>
-
-          {/* User Profile Card */}
           <div className="flex items-center space-x-3 p-2 rounded-xl bg-white border border-slate-200/80">
             <div className="w-8 h-8 rounded-full bg-lavender-100 text-lavender-700 border border-lavender-200 flex items-center justify-center font-bold text-xs flex-shrink-0">
               {user?.name ? user.name.split(' ').map(n=>n[0]).join('') : 'AD'}
@@ -139,7 +110,6 @@ export default function Sidebar({ activeTab, setActiveTab, user, truthStatus, mo
               <p className="text-[10px] text-slate-500 truncate">{user?.degree || 'B.Tech IT Student'}</p>
             </div>
           </div>
-
         </div>
 
       </aside>
