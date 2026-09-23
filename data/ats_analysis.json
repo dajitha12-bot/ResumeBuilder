@@ -1,0 +1,33 @@
+[
+  {
+    "id": "ats_001",
+    "userId": "user_001",
+    "resumeId": "resume_001",
+    "jobId": "job_001",
+    "atsScore": 82,
+    "breakdown": {
+      "keywordMatch": { "score": 30, "max": 35 },
+      "skillsMatch": { "score": 25, "max": 30 },
+      "experienceMatch": { "score": 15, "max": 20 },
+      "educationMatch": { "score": 10, "max": 10 },
+      "formatting": { "score": 2, "max": 5 }
+    },
+    "matchingSkills": ["Java", "Spring Boot", "SQL", "REST API", "Git", "React"],
+    "missingSkills": ["Docker", "AWS"],
+    "matchingKeywords": ["Backend", "Microservices", "REST API", "MySQL", "Database"],
+    "missingKeywords": ["Docker Containerization", "AWS S3", "Cloud Deployment"],
+    "explanations": [
+      "✓ Strong Java & Spring Boot match across projects and internship",
+      "✓ Excellent match for relational database (MySQL/SQL) requirements",
+      "✓ Education degree matches Bachelor's in Information Technology requirement",
+      "⚠ REST API implementation is present but details on exception handling/security are limited",
+      "✗ Docker containerization experience is missing from resume",
+      "✗ AWS cloud services experience is missing from resume"
+    ],
+    "suggestions": [
+      "Highlight Spring Boot REST API controller methods and exception handlers in project descriptions.",
+      "Consider completing a basic Docker or AWS deployment tutorial to address key missing skills."
+    ],
+    "analyzedAt": "2026-09-20"
+  }
+]

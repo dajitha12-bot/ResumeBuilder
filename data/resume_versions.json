@@ -1,0 +1,32 @@
+[
+  {
+    "id": "ver_001",
+    "userId": "user_001",
+    "name": "Java Developer Resume",
+    "targetRole": "Java Spring Boot Developer",
+    "template": "modern",
+    "resumeId": "resume_001",
+    "createdAt": "2026-09-20",
+    "updatedAt": "2026-09-20"
+  },
+  {
+    "id": "ver_002",
+    "userId": "user_001",
+    "name": "Full Stack Developer Resume",
+    "targetRole": "Full Stack Web Developer (React + Java)",
+    "template": "software_developer",
+    "resumeId": "resume_001",
+    "createdAt": "2026-09-20",
+    "updatedAt": "2026-09-20"
+  },
+  {
+    "id": "ver_003",
+    "userId": "user_001",
+    "name": "Fresher Software Engineer",
+    "targetRole": "Associate Software Engineer",
+    "template": "fresher",
+    "resumeId": "resume_001",
+    "createdAt": "2026-09-20",
+    "updatedAt": "2026-09-20"
+  }
+]
