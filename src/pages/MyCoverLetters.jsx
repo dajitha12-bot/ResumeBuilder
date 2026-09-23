@@ -69,13 +69,19 @@ export default function MyCoverLetters({ onNavigate, onEditLetter }) {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 text-left bg-slate-50/50 min-h-screen">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 text-left bg-[#f6f4ee]/60 min-h-screen">
       
       {/* FlowCV Header */}
       <div className="space-y-1">
-        <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">My Cover Letters</h1>
-        <p className="text-sm text-slate-500 font-medium">
-          Your cover letters are 100% free forever with unlimited downloads.
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">My Cover Letters</h1>
+        <p className="text-sm sm:text-base text-slate-500 font-medium">
+          Your first cover letter is free forever. Need more than one cover letter?{' '}
+          <span 
+            onClick={() => onNavigate && onNavigate('templates', 'cover_letters')}
+            className="underline text-slate-700 hover:text-slate-900 cursor-pointer font-semibold"
+          >
+            Upgrade your plan
+          </span>
         </p>
       </div>
 
@@ -85,16 +91,11 @@ export default function MyCoverLetters({ onNavigate, onEditLetter }) {
         {/* Dashed "+ New cover letter" Card */}
         <div
           onClick={() => onNavigate && onNavigate('templates', 'cover_letters')}
-          className="border-2 border-dashed border-slate-300 hover:border-sky-500 rounded-2xl bg-white hover:bg-sky-50/30 transition-all cursor-pointer flex flex-col items-center justify-center min-h-[420px] p-6 text-slate-500 hover:text-sky-600 group shadow-sm hover:shadow-md"
+          className="border-2 border-dashed border-slate-300 hover:border-slate-400 rounded-2xl bg-white/40 hover:bg-white transition-all cursor-pointer flex flex-col items-center justify-center min-h-[440px] p-6 text-slate-500 group shadow-sm hover:shadow-md"
         >
-          <div className="w-14 h-14 rounded-full bg-slate-100 group-hover:bg-sky-100 flex items-center justify-center text-slate-400 group-hover:text-sky-600 transition mb-3">
-            <Plus className="w-7 h-7 stroke-[2.5]" />
-          </div>
-          <span className="font-bold text-base text-slate-700 group-hover:text-sky-600 transition">
+          <Plus className="w-8 h-8 text-slate-400 stroke-[1.75] mb-2 group-hover:scale-110 transition-transform" />
+          <span className="font-extrabold text-base text-slate-700 transition">
             New cover letter
-          </span>
-          <span className="text-xs text-slate-400 mt-1">
-            Choose template to create
           </span>
         </div>
 
@@ -106,8 +107,8 @@ export default function MyCoverLetters({ onNavigate, onEditLetter }) {
             className="bg-white rounded-2xl border border-slate-200/90 hover:border-sky-500 shadow-sm hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between group overflow-hidden relative"
           >
             {/* Live Scaled Document Preview Box */}
-            <div className="h-80 bg-[#f8f9fa] p-4 relative overflow-hidden flex justify-center border-b border-slate-100 items-start">
-              <div className="transform scale-[0.32] origin-top w-[800px] pointer-events-none select-none shadow-md rounded border border-slate-200">
+            <div className="h-[360px] bg-[#f8f9fa] p-4 relative overflow-hidden flex justify-center border-b border-slate-100 items-start">
+              <div className="transform scale-[0.38] origin-top w-[800px] pointer-events-none select-none shadow-md rounded border border-slate-200">
                 <CoverLetterPreview data={letter} template={letter.template || 'modern_blue'} />
               </div>
               
@@ -119,10 +120,10 @@ export default function MyCoverLetters({ onNavigate, onEditLetter }) {
               </div>
             </div>
 
-            {/* Card Footer Caption (Exact FlowCV Screenshot Layout) */}
+            {/* Card Footer Caption (Exact Screenshot Layout) */}
             <div className="p-4 bg-white flex items-center justify-between">
               <div>
-                <h3 className="font-bold text-slate-900 text-sm group-hover:text-sky-600 transition truncate max-w-[200px]">
+                <h3 className="font-extrabold text-slate-900 text-sm group-hover:text-sky-600 transition truncate max-w-[200px]">
                   {letter.name}
                 </h3>
                 <p className="text-xs text-slate-400 mt-0.5 font-medium">
@@ -130,13 +131,13 @@ export default function MyCoverLetters({ onNavigate, onEditLetter }) {
                 </p>
               </div>
 
-              {/* 3-Dots Action Menu Button */}
+              {/* 3-Dots Action Menu Button (Bordered Box matching image) */}
               <div className="relative" onClick={(e) => e.stopPropagation()}>
                 <button
                   onClick={() => setActiveMenuId(activeMenuId === letter.id ? null : letter.id)}
-                  className="p-2 hover:bg-slate-100 rounded-xl text-slate-500 hover:text-slate-800 transition"
+                  className="p-2 border border-slate-300 hover:border-slate-400 hover:bg-slate-50 rounded-xl text-slate-600 transition shadow-sm"
                 >
-                  <MoreVertical className="w-5 h-5" />
+                  <MoreVertical className="w-4 h-4 stroke-[2]" />
                 </button>
 
                 {/* Dropdown Menu */}
