@@ -18,8 +18,8 @@ export default function Dashboard({ user, resume, versions = [], onNavigate }) {
   const userName = user?.name || 'Ajitha D R';
 
   const stats = [
-    { label: 'Saved Resumes', value: '3 Managed', color: 'text-sky-600 bg-sky-50 border-sky-100', icon: FileText },
-    { label: 'Saved Cover Letters', value: '2 Active', color: 'text-purple-600 bg-purple-50 border-purple-100', icon: Mail },
+    { label: 'Saved Resumes', value: '1 Managed', color: 'text-sky-600 bg-sky-50 border-sky-100', icon: FileText },
+    { label: 'Saved Cover Letters', value: '1 Active', color: 'text-purple-600 bg-purple-50 border-purple-100', icon: Mail },
     { label: 'ATS Target Rating', value: '92 / 100', color: 'text-emerald-600 bg-emerald-50 border-emerald-100', icon: CheckCircle2 },
     { label: 'FlowCV Layouts', value: '20 Templates', color: 'text-indigo-600 bg-indigo-50 border-indigo-100', icon: Palette },
   ];

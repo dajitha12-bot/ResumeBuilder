@@ -21,7 +21,14 @@ export class StorageService {
       try {
         let parsed = JSON.parse(stored);
         if (Array.isArray(parsed)) {
-          // Sanitize dicebear avatars & diversify templates
+          // Filter out legacy extra default entries so only 1 default item remains
+          if (collectionName === 'resume_versions') {
+            parsed = parsed.filter(item => item.id !== 'ver_002' && item.id !== 'ver_003');
+          }
+          if (collectionName === 'cover_letters') {
+            parsed = parsed.filter(item => item.id !== 'cl_2' && item.id !== 'cl_3');
+          }
+          // Sanitize dicebear avatars
           parsed = parsed.map((item, index) => {
             const newItem = { ...item };
             if (newItem.sender && newItem.sender.avatarUrl && newItem.sender.avatarUrl.includes('dicebear')) {
@@ -32,11 +39,6 @@ export class StorageService {
             }
             if (newItem.personalInfo && newItem.personalInfo.avatarUrl && newItem.personalInfo.avatarUrl.includes('dicebear')) {
               newItem.personalInfo.avatarUrl = '';
-            }
-            // Diversify cover letter templates if all are desert_rock
-            if (collectionName === 'cover_letters' && newItem.template === 'desert_rock' && index > 0) {
-              const templates = ['modern_blue', 'viola_purple', 'coral_pink', 'hunter_green'];
-              newItem.template = templates[(index - 1) % templates.length];
             }
             return newItem;
           });
