@@ -3,30 +3,96 @@
     "id": "cl_1",
     "userId": "usr_1",
     "name": "Software Engineer Cover Letter",
-    "template": "desert_rock",
+    "template": "modern_blue",
     "sender": {
       "fullName": "Ajitha D R",
       "jobTitle": "B.Tech – Information Technology",
       "email": "dajitha12@gmail.com",
       "phone": "6374784776",
       "location": "Aruppukottai, Virudhunagar District, Tamil Nadu",
-      "avatarUrl": "https://api.dicebear.com/7.x/avataaars/svg?seed=Ajitha",
+      "avatarUrl": "",
       "linkedin": "linkedin.com/in/ajitha-d-r-b3697b323",
       "github": "https://github.com/dajitha12-bot"
     },
     "recipient": {
       "hiringManager": "Ms. Wings",
       "company": "Meta Platforms Inc.",
-      "address": "Deborah Greenfield 1600 Willow Road Menlo Park, California 94025, USA",
-      "date": "14th June, 2026"
+      "address": "1600 Willow Road, Menlo Park, CA 94025",
+      "date": "23rd September, 2026"
     },
     "salutation": "Dear Ms. Wings,",
-    "opening": "I am excited to apply for the Software Engineering Internship position at your company. As a passionate B.Tech Information Technology student with a strong foundation in modern web technologies and software engineering principles, I am confident that my skills and hands-on project experience align with the requirements of this role.",
+    "opening": "I am excited to apply for the Software Engineering Internship position at Meta. As a passionate B.Tech Information Technology student with a strong foundation in modern web technologies and software engineering principles, I am confident that my skills align with your team's goals.",
     "body": [
-      "During my studies at National Engineering College, I have developed expertise in React, Node.js, JavaScript, and database management. I have successfully built multiple web applications including an AI Resume Builder and intelligent data processing systems. These projects honed my abilities in clean architecture, API integration, and responsive frontend UI design.",
-      "My strength lies in analytical problem-solving, collaborative teamwork, and quickly adapting to modern engineering frameworks. I am dedicated to writing clean, maintainable code and building seamless user experiences."
+      "During my studies at National Engineering College, I have developed expertise in React, Node.js, JavaScript, and database management. I have successfully built multiple web applications including an AI Resume Builder and intelligent data processing systems.",
+      "My strength lies in analytical problem-solving, collaborative teamwork, and quickly adapting to modern engineering frameworks."
     ],
-    "closing": "I am eager to contribute my skills and enthusiasm to your engineering team. Thank you for your time and consideration of my application. I look forward to the opportunity to discuss how my background fits your team's goals.",
+    "closing": "Thank you for considering my application. I look forward to discussing how my background fits Meta's innovative projects.",
+    "signoff": "Sincerely,",
+    "signature": "Ajitha D R",
+    "createdAt": "2026-09-23",
+    "updatedAt": "2026-09-23"
+  },
+  {
+    "id": "cl_2",
+    "userId": "usr_1",
+    "name": "Full Stack Developer Cover Letter",
+    "template": "viola_purple",
+    "sender": {
+      "fullName": "Ajitha D R",
+      "jobTitle": "B.Tech – Information Technology",
+      "email": "dajitha12@gmail.com",
+      "phone": "6374784776",
+      "location": "Aruppukottai, Virudhunagar District, Tamil Nadu",
+      "avatarUrl": "",
+      "linkedin": "linkedin.com/in/ajitha-d-r-b3697b323",
+      "github": "https://github.com/dajitha12-bot"
+    },
+    "recipient": {
+      "hiringManager": "Hiring Manager",
+      "company": "Google LLC",
+      "address": "1600 Amphitheatre Parkway, Mountain View, CA",
+      "date": "23rd September, 2026"
+    },
+    "salutation": "Dear Hiring Manager,",
+    "opening": "I am thrilled to submit my application for the Full Stack Engineering role at Google. With hands-on experience developing responsive web services and scalable APIs, I am eager to contribute to high-impact projects.",
+    "body": [
+      "I have built full-stack solutions using React, Node.js, and Java Spring Boot, implementing modular component architecture and clean state management.",
+      "Working on collaborative engineering projects has strengthened my ability to debug complex systems and write production-ready code."
+    ],
+    "closing": "Thank you for your time and consideration. I welcome the opportunity to discuss my qualifications further in an interview.",
+    "signoff": "Best regards,",
+    "signature": "Ajitha D R",
+    "createdAt": "2026-09-23",
+    "updatedAt": "2026-09-23"
+  },
+  {
+    "id": "cl_3",
+    "userId": "usr_1",
+    "name": "Frontend Engineer Cover Letter",
+    "template": "coral_pink",
+    "sender": {
+      "fullName": "Ajitha D R",
+      "jobTitle": "B.Tech – Information Technology",
+      "email": "dajitha12@gmail.com",
+      "phone": "6374784776",
+      "location": "Aruppukottai, Virudhunagar District, Tamil Nadu",
+      "avatarUrl": "",
+      "linkedin": "linkedin.com/in/ajitha-d-r-b3697b323",
+      "github": "https://github.com/dajitha12-bot"
+    },
+    "recipient": {
+      "hiringManager": "Lead Recruiter",
+      "company": "Microsoft Corp.",
+      "address": "One Microsoft Way, Redmond, WA",
+      "date": "23rd September, 2026"
+    },
+    "salutation": "Dear Lead Recruiter,",
+    "opening": "I am writing to express my strong interest in the Frontend Engineer role at Microsoft. My passion for building intuitive user interfaces and accessible web experiences drives my continuous learning.",
+    "body": [
+      "I have developed multiple React single-page applications focused on clean layout design, fast render performance, and seamless user flows.",
+      "I am inspired by Microsoft's commitment to developer productivity and accessible technology for everyone."
+    ],
+    "closing": "I look forward to discussing how my skills and enthusiasm align with Microsoft's engineering culture.",
     "signoff": "Sincerely,",
     "signature": "Ajitha D R",
     "createdAt": "2026-09-23",

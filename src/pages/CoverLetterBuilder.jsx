@@ -216,9 +216,48 @@ export default function CoverLetterBuilder({ letterId, onNavigate }) {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Avatar / Photo URL</label>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">Profile Photo Upload</label>
+                  <div className="flex items-center space-x-3 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                    {letterData.sender?.avatarUrl ? (
+                      <img src={letterData.sender.avatarUrl} alt="Preview" className="w-12 h-12 rounded-full object-cover border border-slate-300 shrink-0" />
+                    ) : (
+                      <div className="w-12 h-12 rounded-full border-2 border-dashed border-sky-400 bg-sky-50 flex items-center justify-center text-sky-600 text-xs font-bold shrink-0">
+                        📷
+                      </div>
+                    )}
+                    <div className="flex-1 space-y-1">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onloadend = () => {
+                              updateNestedField('sender', 'avatarUrl', reader.result);
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                        className="text-xs text-slate-500 file:mr-2 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-sky-600 file:text-white hover:file:bg-sky-700 cursor-pointer"
+                      />
+                      {letterData.sender?.avatarUrl && (
+                        <button
+                          type="button"
+                          onClick={() => updateNestedField('sender', 'avatarUrl', '')}
+                          className="text-[10px] text-red-500 hover:underline block font-semibold"
+                        >
+                          Remove Photo
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">Or Image URL</label>
                   <input
                     type="text"
+                    placeholder="https://example.com/photo.jpg"
                     value={letterData.sender?.avatarUrl || ''}
                     onChange={(e) => updateNestedField('sender', 'avatarUrl', e.target.value)}
                     className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:ring-2 focus:ring-sky-500 outline-none text-xs"

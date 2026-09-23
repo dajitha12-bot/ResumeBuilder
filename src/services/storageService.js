@@ -19,7 +19,30 @@ export class StorageService {
     const stored = localStorage.getItem(`ai_resume_${collectionName}`);
     if (stored) {
       try {
-        return JSON.parse(stored);
+        let parsed = JSON.parse(stored);
+        if (Array.isArray(parsed)) {
+          // Sanitize dicebear avatars & diversify templates
+          parsed = parsed.map((item, index) => {
+            const newItem = { ...item };
+            if (newItem.sender && newItem.sender.avatarUrl && newItem.sender.avatarUrl.includes('dicebear')) {
+              newItem.sender.avatarUrl = '';
+            }
+            if (newItem.personalInfo && newItem.personalInfo.avatar && newItem.personalInfo.avatar.includes('dicebear')) {
+              newItem.personalInfo.avatar = '';
+            }
+            if (newItem.personalInfo && newItem.personalInfo.avatarUrl && newItem.personalInfo.avatarUrl.includes('dicebear')) {
+              newItem.personalInfo.avatarUrl = '';
+            }
+            // Diversify cover letter templates if all are desert_rock
+            if (collectionName === 'cover_letters' && newItem.template === 'desert_rock' && index > 0) {
+              const templates = ['modern_blue', 'viola_purple', 'coral_pink', 'hunter_green'];
+              newItem.template = templates[(index - 1) % templates.length];
+            }
+            return newItem;
+          });
+          localStorage.setItem(`ai_resume_${collectionName}`, JSON.stringify(parsed));
+          return parsed;
+        }
       } catch (e) {
         console.error(`Error parsing ${collectionName} from localStorage:`, e);
       }

@@ -22,16 +22,19 @@ export default function MyCoverLetters({ onNavigate, onEditLetter }) {
     e.preventDefault();
     if (!newLetterName.trim()) return;
 
+    const colorTemplates = ['modern_blue', 'viola_purple', 'coral_pink', 'hunter_green', 'desert_rock', 'gold_minimal'];
+    const randomTemplate = colorTemplates[coverLetters.length % colorTemplates.length];
+
     const newRecord = StorageService.createRecord('cover_letters', {
       name: newLetterName.trim(),
-      template: 'desert_rock',
+      template: randomTemplate,
       sender: {
         fullName: 'Ajitha D R',
         jobTitle: 'B.Tech – Information Technology',
         email: 'dajitha12@gmail.com',
         phone: '6374784776',
         location: 'Aruppukottai, Virudhunagar District, Tamil Nadu',
-        avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Ajitha',
+        avatarUrl: '',
         linkedin: 'linkedin.com/in/ajitha-d-r-b3697b323',
         github: 'https://github.com/dajitha12-bot'
       },

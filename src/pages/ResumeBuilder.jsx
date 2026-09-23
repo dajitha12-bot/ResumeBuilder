@@ -249,6 +249,51 @@ export default function ResumeBuilder({ resume, setResume, truthStatus, versions
               {activeSection === 'personal' && (
                 <div className="space-y-3">
                   <h4 className="font-bold text-slate-900 text-xs uppercase tracking-wider">Personal Information</h4>
+                  
+                  {/* Profile Photo File Upload */}
+                  <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+                    <label className="block text-[11px] font-bold text-slate-700">Profile Photo Upload</label>
+                    <div className="flex items-center space-x-3">
+                      {(resume.personalInfo?.avatarUrl || resume.personalInfo?.avatar) ? (
+                        <img src={resume.personalInfo?.avatarUrl || resume.personalInfo?.avatar} alt="Preview" className="w-12 h-12 rounded-full object-cover border border-slate-300 shrink-0" />
+                      ) : (
+                        <div className="w-12 h-12 rounded-full border-2 border-dashed border-sky-400 bg-sky-50 flex items-center justify-center text-sky-600 text-xs font-bold shrink-0">
+                          📷
+                        </div>
+                      )}
+                      <div className="flex-1 space-y-1">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => {
+                            const file = e.target.files[0];
+                            if (file) {
+                              const reader = new FileReader();
+                              reader.onloadend = () => {
+                                updatePersonalInfo('avatarUrl', reader.result);
+                                updatePersonalInfo('avatar', reader.result);
+                              };
+                              reader.readAsDataURL(file);
+                            }
+                          }}
+                          className="text-xs text-slate-500 file:mr-2 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-sky-600 file:text-white hover:file:bg-sky-700 cursor-pointer"
+                        />
+                        {(resume.personalInfo?.avatarUrl || resume.personalInfo?.avatar) && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              updatePersonalInfo('avatarUrl', '');
+                              updatePersonalInfo('avatar', '');
+                            }}
+                            className="text-[10px] text-red-500 hover:underline block font-semibold"
+                          >
+                            Remove Photo
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
                   <input
                     type="text"
                     value={resume.personalInfo?.fullName || ''}
