@@ -6,14 +6,12 @@ import {
   Bot, 
   Plus, 
   ArrowRight, 
-  Download, 
   Eye, 
   Edit3, 
-  AlertCircle, 
-  CheckCircle2, 
-  ShieldAlert,
   Sparkles,
-  TrendingUp
+  TrendingUp,
+  FolderCheck,
+  Award
 } from 'lucide-react';
 
 export default function Dashboard({ user, resume, vaultItems = [], versions = [], truthReport, onNavigate }) {
@@ -38,12 +36,12 @@ export default function Dashboard({ user, resume, vaultItems = [], versions = []
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Welcome back, {userName}! 👋</h1>
           <p className="text-xs sm:text-sm text-brand-100 max-w-xl">
-            {user?.degree || 'B.Tech Information Technology'} — {user?.college || 'National Engineering College'}. Manage your resume versions, verify career claims, and prepare for interviews.
+            {user?.degree || 'B.Tech Information Technology'} — {user?.college || 'National Engineering College'}. Manage your FlowCV-style resume versions, verify career claims, and build tailored applications.
           </p>
         </div>
 
         <button
-          onClick={() => onNavigate('builder')}
+          onClick={() => onNavigate('my-resumes')}
           className="px-5 py-2.5 bg-white text-brand-700 hover:bg-brand-50 font-bold rounded-xl text-xs shadow-sm flex items-center space-x-1.5 transition-all flex-shrink-0"
         >
           <Plus className="w-4 h-4" />
@@ -74,14 +72,14 @@ export default function Dashboard({ user, resume, vaultItems = [], versions = []
         <h2 className="text-base font-bold text-slate-900">Quick Actions</h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <button
-            onClick={() => onNavigate('builder')}
+            onClick={() => onNavigate('my-resumes')}
             className="p-4 bg-white hover:bg-brand-50/50 rounded-2xl border border-slate-200 text-left space-y-2 transition-all group"
           >
             <div className="w-9 h-9 rounded-xl bg-brand-100 text-brand-600 flex items-center justify-center group-hover:scale-105 transition-transform">
               <FileText className="w-4 h-4" />
             </div>
-            <h4 className="font-bold text-slate-900 text-xs">Create Resume</h4>
-            <p className="text-[11px] text-slate-500">Edit form & preview live layout</p>
+            <h4 className="font-bold text-slate-900 text-xs">My Resumes</h4>
+            <p className="text-[11px] text-slate-500">FlowCV editor & version management</p>
           </button>
 
           <button
@@ -119,19 +117,22 @@ export default function Dashboard({ user, resume, vaultItems = [], versions = []
         </div>
       </div>
 
-      {/* Content Grid: Recent Resume & Resume Health Audit */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* Clean Grid Layout (Without Resume Health Audit card) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        {/* Recent Resume */}
-        <div className="lg:col-span-2 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+        {/* Recent Resumes Overview (8 cols) */}
+        <div className="lg:col-span-8 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <div>
               <h3 className="font-bold text-slate-900 text-base">Active Resume</h3>
               <p className="text-xs text-slate-500">Current working draft and template settings</p>
             </div>
-            <span className="px-2.5 py-1 bg-brand-50 text-brand-700 border border-brand-200 rounded-full text-xs font-semibold">
+            <button 
+              onClick={() => onNavigate('my-resumes')}
+              className="px-2.5 py-1 bg-brand-50 text-brand-700 border border-brand-200 rounded-full text-xs font-semibold"
+            >
               Template: {resume?.template || 'Modern'}
-            </span>
+            </button>
           </div>
 
           <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
@@ -146,7 +147,7 @@ export default function Dashboard({ user, resume, vaultItems = [], versions = []
                   onClick={() => onNavigate('builder')}
                   className="p-2 bg-white hover:bg-slate-100 text-slate-700 rounded-lg border border-slate-200 text-xs font-semibold flex items-center gap-1"
                 >
-                  <Edit3 className="w-3.5 h-3.5" /> Edit
+                  <Edit3 className="w-3.5 h-3.5" /> Open Editor
                 </button>
                 <button
                   onClick={() => onNavigate('builder')}
@@ -177,72 +178,62 @@ export default function Dashboard({ user, resume, vaultItems = [], versions = []
           <div className="space-y-2">
             <h5 className="text-xs font-bold text-slate-700">Saved Resume Versions ({versions.length || 3}):</h5>
             <div className="space-y-1.5">
-              {[
-                { name: 'Java Developer Resume', role: 'Java Spring Boot Developer', template: 'Modern' },
-                { name: 'Full Stack Developer Resume', role: 'React + Java Developer', template: 'Software Developer' },
-                { name: 'Fresher Software Engineer', role: 'Associate Software Engineer', template: 'Fresher' }
-              ].map((ver, idx) => (
-                <div key={idx} className="flex items-center justify-between p-2.5 bg-slate-50 hover:bg-slate-100 rounded-xl text-xs cursor-pointer border border-slate-200/60" onClick={() => onNavigate('builder')}>
-                  <div className="flex items-center space-x-2">
+              {(versions.length > 0 ? versions : [
+                { name: 'Java Developer Resume', targetRole: 'Java Spring Boot Developer', template: 'Modern' },
+                { name: 'Full Stack Developer Resume', targetRole: 'React + Java Developer', template: 'Software Developer' },
+                { name: 'Fresher Software Engineer', targetRole: 'Associate Software Engineer', template: 'Fresher' }
+              ]).map((ver, idx) => (
+                <div 
+                  key={idx} 
+                  className="flex items-center justify-between p-3 bg-slate-50 hover:bg-slate-100 rounded-xl text-xs cursor-pointer border border-slate-200/60" 
+                  onClick={() => onNavigate('my-resumes')}
+                >
+                  <div className="flex items-center space-x-2.5">
                     <FileText className="w-4 h-4 text-brand-500" />
                     <div>
                       <span className="font-semibold text-slate-900">{ver.name}</span>
-                      <span className="text-slate-500 text-[11px] block">{ver.role}</span>
+                      <span className="text-slate-500 text-[11px] block">{ver.targetRole}</span>
                     </div>
                   </div>
-                  <span className="text-[10px] bg-white px-2 py-0.5 rounded border text-slate-600 font-mono">{ver.template}</span>
+                  <span className="text-[10px] bg-white px-2 py-0.5 rounded border text-slate-600 font-mono">{ver.template || 'Modern'}</span>
                 </div>
               ))}
             </div>
           </div>
         </div>
 
-        {/* Resume Health Audit */}
-        <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
-          <div className="border-b border-slate-100 pb-3">
-            <h3 className="font-bold text-slate-900 text-base">Resume Health Audit</h3>
-            <p className="text-xs text-slate-500">Automated structural & truth verification</p>
+        {/* Career Vault Summary Card (4 cols) */}
+        <div className="lg:col-span-4 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+          <div className="border-b border-slate-100 pb-3 flex items-center justify-between">
+            <div>
+              <h3 className="font-bold text-slate-900 text-base">Career Vault Proof</h3>
+              <p className="text-xs text-slate-500">Verified evidence base</p>
+            </div>
+            <FolderCheck className="w-5 h-5 text-lavender-600" />
           </div>
 
-          <div className="space-y-3">
-            <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-200 flex items-start space-x-2.5">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
-              <div className="text-xs">
-                <span className="font-bold text-emerald-900">Required Sections Present</span>
-                <p className="text-emerald-700 text-[11px] mt-0.5">Contact info, summary, education, skills, and projects are filled.</p>
-              </div>
+          <div className="space-y-3 text-xs">
+            <div className="p-3 bg-lavender-50 rounded-xl border border-lavender-100 space-y-1">
+              <span className="font-bold text-lavender-900">4 Mini-Projects Verified</span>
+              <p className="text-lavender-700 text-[11px]">Smart University Events, Smart Transit Pass, Ocean Intelligence, AI Zoo Planner.</p>
             </div>
 
-            <div className="p-3 bg-blue-50 rounded-xl border border-blue-200 flex items-start space-x-2.5">
-              <CheckCircle2 className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
-              <div className="text-xs">
-                <span className="font-bold text-blue-900">ATS Formatting Compliant</span>
-                <p className="text-blue-700 text-[11px] mt-0.5">No graphic tables or unreadable symbols detected.</p>
-              </div>
+            <div className="p-3 bg-brand-50 rounded-xl border border-brand-100 space-y-1">
+              <span className="font-bold text-brand-900">Full Stack Internship</span>
+              <p className="text-brand-700 text-[11px]">Cognizant Technology Solutions (Virtual Internship) - Spring Boot & React.</p>
             </div>
 
-            <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 flex items-start space-x-2.5">
-              <ShieldAlert className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
-              <div className="text-xs">
-                <span className="font-bold text-amber-900">Truth Guard Notice</span>
-                <p className="text-amber-800 text-[11px] mt-0.5">Ensure all listed metrics have matching evidence in Career Vault.</p>
-              </div>
-            </div>
-
-            <div className="p-3 bg-indigo-50 rounded-xl border border-indigo-200 flex items-start space-x-2.5">
-              <Target className="w-4 h-4 text-indigo-600 flex-shrink-0 mt-0.5" />
-              <div className="text-xs">
-                <span className="font-bold text-indigo-900">Missing Job Keywords</span>
-                <p className="text-indigo-800 text-[11px] mt-0.5">Docker & AWS are missing for target Java Backend roles.</p>
-              </div>
+            <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-100 space-y-1">
+              <span className="font-bold text-emerald-900">4 National Certifications</span>
+              <p className="text-emerald-700 text-[11px]">NPTEL Technical English, MongoDB Basics, IoT, Cisco Networking.</p>
             </div>
           </div>
 
           <button
-            onClick={() => onNavigate('job-analyzer')}
+            onClick={() => onNavigate('career-vault')}
             className="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold rounded-xl text-xs flex items-center justify-center space-x-1.5 transition-all"
           >
-            <span>Run Full Job Match & ATS Check</span>
+            <span>Open Career Vault Evidence</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
