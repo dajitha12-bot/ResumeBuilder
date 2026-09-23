@@ -2,6 +2,7 @@ import React from 'react';
 import { 
   LayoutDashboard, 
   FileText, 
+  Mail,
   Palette, 
   Edit3, 
   Bot, 
@@ -16,6 +17,7 @@ export default function Sidebar({ activeTab, setActiveTab, user, truthStatus, mo
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, badge: null },
     { id: 'my-resumes', label: 'My Resumes', icon: FileText, badge: '3' },
+    { id: 'cover-letters', label: 'Cover Letters', icon: Mail, badge: 'New' },
     { id: 'templates', label: 'Templates', icon: Palette, badge: '8' },
     { id: 'assistant', label: 'AI Assistant', icon: Bot, badge: 'AI' },
     { id: 'settings', label: 'Settings', icon: Settings, badge: null },

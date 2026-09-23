@@ -3,13 +3,15 @@ import resumesSeed from '../data/resumes.json';
 import vaultSeed from '../data/career_vault.json';
 import atsSeed from '../data/ats_analysis.json';
 import versionsSeed from '../data/resume_versions.json';
+import coverLettersSeed from '../data/cover_letters.json';
 
 const SEEDS = {
   users: usersSeed,
   resumes: resumesSeed,
   career_vault: vaultSeed,
   ats_analysis: atsSeed,
-  resume_versions: versionsSeed
+  resume_versions: versionsSeed,
+  cover_letters: coverLettersSeed
 };
 
 export class StorageService {

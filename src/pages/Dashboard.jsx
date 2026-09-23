@@ -1,6 +1,7 @@
 import React from 'react';
 import { 
   FileText, 
+  Mail,
   Palette, 
   Bot, 
   Plus, 
@@ -79,6 +80,17 @@ export default function Dashboard({ user, resume, versions = [], onNavigate }) {
             </div>
             <h4 className="font-bold text-slate-900 text-xs">My Resumes</h4>
             <p className="text-[11px] text-slate-500">FlowCV editor & version manager</p>
+          </button>
+
+          <button
+            onClick={() => onNavigate('cover-letters')}
+            className="p-4 bg-white hover:bg-sky-50/50 rounded-2xl border border-slate-200 text-left space-y-2 transition-all group"
+          >
+            <div className="w-9 h-9 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center group-hover:scale-105 transition-transform">
+              <Mail className="w-4 h-4" />
+            </div>
+            <h4 className="font-bold text-slate-900 text-xs">Cover Letters</h4>
+            <p className="text-[11px] text-slate-500">FlowCV cover letter editor</p>
           </button>
 
           <button

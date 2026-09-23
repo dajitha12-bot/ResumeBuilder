@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard';
 import MyResumes from './pages/MyResumes';
+import MyCoverLetters from './pages/MyCoverLetters';
+import CoverLetterBuilder from './pages/CoverLetterBuilder';
 import TemplatesPage from './pages/TemplatesPage';
 import ResumeBuilder from './pages/ResumeBuilder';
 import AICareerAssistant from './pages/AICareerAssistant';
@@ -15,6 +17,7 @@ export default function App() {
   const [resume, setResume] = useState(null);
   const [vaultItems, setVaultItems] = useState([]);
   const [versions, setVersions] = useState([]);
+  const [selectedCoverLetterId, setSelectedCoverLetterId] = useState(null);
   const [truthStatus, setTruthStatus] = useState({ verified: true, truthScore: 100, findings: [] });
   const [mobileOpen, setMobileOpen] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -107,6 +110,20 @@ export default function App() {
               setResume={setResume}
               versions={versions}
               setVersions={setVersions}
+              onNavigate={setActiveTab}
+            />
+          )}
+
+          {activeTab === 'cover-letters' && (
+            <MyCoverLetters
+              onNavigate={setActiveTab}
+              onEditLetter={(id) => setSelectedCoverLetterId(id)}
+            />
+          )}
+
+          {activeTab === 'cover-letter-builder' && (
+            <CoverLetterBuilder
+              letterId={selectedCoverLetterId}
               onNavigate={setActiveTab}
             />
           )}

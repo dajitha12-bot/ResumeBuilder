@@ -1,0 +1,35 @@
+[
+  {
+    "id": "cl_1",
+    "userId": "usr_1",
+    "name": "Software Engineer Cover Letter",
+    "template": "desert_rock",
+    "sender": {
+      "fullName": "Ajitha D R",
+      "jobTitle": "B.Tech – Information Technology",
+      "email": "dajitha12@gmail.com",
+      "phone": "6374784776",
+      "location": "Aruppukottai, Virudhunagar District, Tamil Nadu",
+      "avatarUrl": "https://api.dicebear.com/7.x/avataaars/svg?seed=Ajitha",
+      "linkedin": "linkedin.com/in/ajitha-d-r-b3697b323",
+      "github": "https://github.com/dajitha12-bot"
+    },
+    "recipient": {
+      "hiringManager": "Ms. Wings",
+      "company": "Meta Platforms Inc.",
+      "address": "Deborah Greenfield 1600 Willow Road Menlo Park, California 94025, USA",
+      "date": "14th June, 2026"
+    },
+    "salutation": "Dear Ms. Wings,",
+    "opening": "I am excited to apply for the Software Engineering Internship position at your company. As a passionate B.Tech Information Technology student with a strong foundation in modern web technologies and software engineering principles, I am confident that my skills and hands-on project experience align with the requirements of this role.",
+    "body": [
+      "During my studies at National Engineering College, I have developed expertise in React, Node.js, JavaScript, and database management. I have successfully built multiple web applications including an AI Resume Builder and intelligent data processing systems. These projects honed my abilities in clean architecture, API integration, and responsive frontend UI design.",
+      "My strength lies in analytical problem-solving, collaborative teamwork, and quickly adapting to modern engineering frameworks. I am dedicated to writing clean, maintainable code and building seamless user experiences."
+    ],
+    "closing": "I am eager to contribute my skills and enthusiasm to your engineering team. Thank you for your time and consideration of my application. I look forward to the opportunity to discuss how my background fits your team's goals.",
+    "signoff": "Sincerely,",
+    "signature": "Ajitha D R",
+    "createdAt": "2026-09-23",
+    "updatedAt": "2026-09-23"
+  }
+]

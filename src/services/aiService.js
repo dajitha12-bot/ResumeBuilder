@@ -92,25 +92,19 @@ export class MockAIEngine {
     return questions;
   }
 
-  static generateCoverLetter(resume, jobDescription) {
-    const name = resume?.personalInfo?.fullName || 'Ajitha D R';
-    const role = jobDescription?.title || resume?.targetRole || 'Junior Software Developer';
-    const company = jobDescription?.company || 'Target Tech Company';
-    const skills = resume?.skills?.languages ? [...resume.skills.languages, ...(resume.skills.frameworks || [])].join(', ') : 'Java, Spring Boot, React, and SQL';
+  static generateCoverLetter(data) {
+    const name = data?.senderName || 'Ajitha D R';
+    const role = data?.jobTitle || 'Software Engineer';
+    const company = data?.companyName || 'Target Tech Company';
 
-    return `Dear Hiring Manager at ${company},
-
-I am writing to express my strong enthusiasm for the ${role} position. As an Information Technology student with hands-on technical experience in ${skills}, I am eager to apply my software development expertise to support your engineering team's goals.
-
-Through my academic coursework and project initiatives—such as developing the Smart University Event Management system and completing a Full Stack Java internship—I have cultivated strong skills in microservices architecture, RESTful API design, and relational database management. I pride myself on writing clean, well-tested code and quickly mastering new frameworks.
-
-What excites me most about ${company} is your commitment to technical innovation. My background in building responsive frontend interfaces connected to reliable backend services aligns closely with your requirements for this role.
-
-Thank you for considering my application. I look forward to the opportunity to discuss how my skill set and passion for software engineering can contribute to ${company}.
-
-Sincerely,
-${name}
-${resume?.personalInfo?.email || ''} | ${resume?.personalInfo?.phone || ''}`;
+    return {
+      opening: `I am writing to express my strong enthusiasm for the ${role} position at ${company}. As a dedicated Information Technology student with practical software development experience, I am eager to contribute my technical skills and passion to your engineering team.`,
+      body: [
+        `During my academic studies and project work, I have gained hands-on experience in building modern web applications, RESTful APIs, and responsive user interfaces. I have successfully led software projects implementing React, Node.js, and Java backend services with modular architecture.`,
+        `What attracts me to ${company} is your reputation for innovation and quality software engineering. I pride myself on rapid problem solving, writing clean code, and working seamlessly within collaborative teams.`
+      ],
+      closing: `Thank you for considering my application for the ${role} position. I welcome the opportunity to interview and discuss how my background and enthusiasm align with ${company}'s goals.`
+    };
   }
 
   static analyzeSkillGap(resumeSkills = [], jobSkills = []) {
