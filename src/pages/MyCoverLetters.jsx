@@ -1,25 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { Plus, MoreVertical, Edit3, Copy, Trash2, Download, FileText } from 'lucide-react';
 import { StorageService } from '../services/storageService';
 import CoverLetterPreview from '../components/CoverLetterPreview';
-
-const TEMPLATE_OPTIONS = [
-  { id: 'modern_blue', name: 'Modern Blue', colorBg: 'bg-sky-600', desc: 'Sky Blue Accent Header Line' },
-  { id: 'viola_purple', name: 'Viola Purple', colorBg: 'bg-purple-900', desc: 'Dark Purple Header Band' },
-  { id: 'hunter_green', name: 'Hunter Green', colorBg: 'bg-emerald-800', desc: 'Sage Green Sidebar' },
-  { id: 'coral_pink', name: 'Coral Pink', colorBg: 'bg-rose-500', desc: 'Coral Pink Header' },
-  { id: 'gold_minimal', name: 'Gold Minimal', colorBg: 'bg-amber-500', desc: 'Gold Border Frame' },
-  { id: 'desert_rock', name: 'Desert Rock', colorBg: 'bg-[#d6c5b3]', desc: 'Warm Beige Sidebar' },
-  { id: 'teal_slate', name: 'Teal Slate', colorBg: 'bg-teal-900', desc: 'Teal Split Column' },
-  { id: 'corporate_navy', name: 'Corporate Navy', colorBg: 'bg-slate-900', desc: 'Dark Navy Top Banner' }
-];
+import { exportToPDF } from '../utils/exportUtils';
 
 export default function MyCoverLetters({ onNavigate, onEditLetter }) {
   const [coverLetters, setCoverLetters] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newLetterName, setNewLetterName] = useState('');
-  const [selectedTemplate, setSelectedTemplate] = useState('modern_blue');
+  const [activeMenuId, setActiveMenuId] = useState(null);
+  const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
   const [editingLetter, setEditingLetter] = useState(null);
-  const [renameModalOpen, setRenameModalOpen] = useState(false);
+  const [renameValue, setRenameValue] = useState('');
 
   useEffect(() => {
     loadLetters();
@@ -30,46 +20,6 @@ export default function MyCoverLetters({ onNavigate, onEditLetter }) {
     setCoverLetters(list);
   };
 
-  const handleCreateNew = (e) => {
-    e.preventDefault();
-    if (!newLetterName.trim()) return;
-
-    const newRecord = StorageService.createRecord('cover_letters', {
-      name: newLetterName.trim(),
-      template: selectedTemplate || 'modern_blue',
-      sender: {
-        fullName: 'Ajitha D R',
-        jobTitle: 'B.Tech – Information Technology',
-        email: 'dajitha12@gmail.com',
-        phone: '6374784776',
-        location: 'Aruppukottai, Virudhunagar District, Tamil Nadu',
-        avatarUrl: '',
-        linkedin: 'linkedin.com/in/ajitha-d-r-b3697b323',
-        github: 'https://github.com/dajitha12-bot'
-      },
-      recipient: {
-        hiringManager: 'Hiring Manager',
-        company: 'Target Company',
-        address: 'Company Location, Country',
-        date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
-      },
-      salutation: 'Dear Hiring Manager,',
-      opening: 'I am excited to apply for the position at your company. With a strong background in software engineering and web development, I am confident in my ability to add immediate value to your team.',
-      body: [
-        'Throughout my academic career at National Engineering College, I have gained hands-on experience in building modern web applications, scalable backend APIs, and responsive UI components.',
-        'I am impressed by your company\'s commitment to innovation and look forward to contributing my technical skills and enthusiasm to your projects.'
-      ],
-      closing: 'Thank you for considering my application. I welcome the opportunity to discuss my qualifications further in an interview.',
-      signoff: 'Sincerely,',
-      signature: 'Ajitha D R'
-    }, 'cl');
-
-    setIsModalOpen(false);
-    setNewLetterName('');
-    if (onEditLetter) onEditLetter(newRecord.id);
-    if (onNavigate) onNavigate('cover-letter-builder');
-  };
-
   const handleOpenLetter = (id) => {
     if (onEditLetter) onEditLetter(id);
     if (onNavigate) onNavigate('cover-letter-builder');
@@ -77,6 +27,7 @@ export default function MyCoverLetters({ onNavigate, onEditLetter }) {
 
   const handleDuplicate = (letter, e) => {
     e.stopPropagation();
+    setActiveMenuId(null);
     const duplicated = {
       ...letter,
       id: undefined,
@@ -89,196 +40,175 @@ export default function MyCoverLetters({ onNavigate, onEditLetter }) {
 
   const handleDelete = (id, e) => {
     e.stopPropagation();
+    setActiveMenuId(null);
     if (window.confirm('Are you sure you want to delete this cover letter?')) {
       StorageService.deleteById('cover_letters', id);
       loadLetters();
     }
   };
 
-  const handleRename = (e) => {
+  const handleRenameSubmit = (e) => {
     e.preventDefault();
-    if (!editingLetter || !newLetterName.trim()) return;
+    if (!editingLetter || !renameValue.trim()) return;
 
     StorageService.updateById('cover_letters', editingLetter.id, {
-      name: newLetterName.trim()
+      name: renameValue.trim()
     });
-    setRenameModalOpen(false);
+    setIsRenameModalOpen(false);
     setEditingLetter(null);
-    setNewLetterName('');
+    setRenameValue('');
     loadLetters();
   };
 
   const openRenameModal = (letter, e) => {
     e.stopPropagation();
+    setActiveMenuId(null);
     setEditingLetter(letter);
-    setNewLetterName(letter.name);
-    setRenameModalOpen(true);
+    setRenameValue(letter.name);
+    setIsRenameModalOpen(true);
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-8 text-left">
-      {/* Top Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-        <div>
-          <h1 className="text-2xl font-extrabold text-slate-800 tracking-tight flex items-center gap-2">
-            ✉️ My Cover Letters
-          </h1>
-          <p className="text-sm text-slate-500 mt-1">
-            Create, customize, and export professional FlowCV-style cover letters.
-          </p>
-        </div>
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="px-5 py-2.5 bg-sky-600 hover:bg-sky-700 text-white font-semibold rounded-xl shadow-sm transition flex items-center gap-2"
-        >
-          <span className="text-lg">+</span> Create New Cover Letter
-        </button>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 text-left bg-slate-50/50 min-h-screen">
+      
+      {/* FlowCV Header */}
+      <div className="space-y-1">
+        <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">My Cover Letters</h1>
+        <p className="text-sm text-slate-500 font-medium">
+          Your cover letters are 100% free forever with unlimited downloads.
+        </p>
       </div>
 
-      {/* Grid of Cover Letters */}
-      {coverLetters.length === 0 ? (
-        <div className="text-center py-16 bg-white rounded-2xl border border-slate-100 shadow-sm">
-          <div className="w-16 h-16 bg-sky-50 text-sky-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
-            ✉️
+      {/* Cover Letters Grid: Dashed "+ New cover letter" Card First, then Saved Letters */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        
+        {/* Dashed "+ New cover letter" Card */}
+        <div
+          onClick={() => onNavigate && onNavigate('templates')}
+          className="border-2 border-dashed border-slate-300 hover:border-sky-500 rounded-2xl bg-white hover:bg-sky-50/30 transition-all cursor-pointer flex flex-col items-center justify-center min-h-[420px] p-6 text-slate-500 hover:text-sky-600 group shadow-sm hover:shadow-md"
+        >
+          <div className="w-14 h-14 rounded-full bg-slate-100 group-hover:bg-sky-100 flex items-center justify-center text-slate-400 group-hover:text-sky-600 transition mb-3">
+            <Plus className="w-7 h-7 stroke-[2.5]" />
           </div>
-          <h3 className="text-lg font-bold text-slate-800">No Cover Letters Yet</h3>
-          <p className="text-sm text-slate-500 max-w-sm mx-auto mt-1 mb-6">
-            Build your first tailored cover letter matching your resume design.
-          </p>
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="px-5 py-2.5 bg-sky-600 hover:bg-sky-700 text-white font-semibold rounded-xl shadow transition"
-          >
-            Create First Cover Letter
-          </button>
+          <span className="font-bold text-base text-slate-700 group-hover:text-sky-600 transition">
+            New cover letter
+          </span>
+          <span className="text-xs text-slate-400 mt-1">
+            Choose template to create
+          </span>
         </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {coverLetters.map((letter) => (
-            <div
-              key={letter.id}
-              onClick={() => handleOpenLetter(letter.id)}
-              className="bg-white rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition cursor-pointer flex flex-col justify-between group overflow-hidden"
-            >
-              {/* Thumbnail Container */}
-              <div className="h-64 bg-slate-50 p-4 relative overflow-hidden flex justify-center border-b border-slate-100">
-                <div className="transform scale-[0.35] origin-top w-[800px] pointer-events-none select-none shadow-sm">
-                  <CoverLetterPreview data={letter} template={letter.template || 'modern_blue'} />
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
-                  <span className="px-4 py-2 bg-slate-900/80 text-white font-medium text-xs rounded-lg backdrop-blur shadow">
-                    Click to Edit ✏️
-                  </span>
-                </div>
+
+        {/* Saved Cover Letter Cards */}
+        {coverLetters.map((letter) => (
+          <div
+            key={letter.id}
+            onClick={() => handleOpenLetter(letter.id)}
+            className="bg-white rounded-2xl border border-slate-200/90 hover:border-sky-500 shadow-sm hover:shadow-xl transition-all cursor-pointer flex flex-col justify-between group overflow-hidden relative"
+          >
+            {/* Live Scaled Document Preview Box */}
+            <div className="h-80 bg-[#f8f9fa] p-4 relative overflow-hidden flex justify-center border-b border-slate-100 items-start">
+              <div className="transform scale-[0.32] origin-top w-[800px] pointer-events-none select-none shadow-md rounded border border-slate-200">
+                <CoverLetterPreview data={letter} template={letter.template || 'modern_blue'} />
+              </div>
+              
+              {/* Hover Overlay Button */}
+              <div className="absolute inset-0 bg-slate-900/15 backdrop-blur-[1px] opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                <span className="px-5 py-2.5 bg-slate-900/80 text-white font-bold text-xs rounded-xl shadow-lg backdrop-blur">
+                  Edit Cover Letter ✏️
+                </span>
+              </div>
+            </div>
+
+            {/* Card Footer Caption (Exact FlowCV Screenshot Layout) */}
+            <div className="p-4 bg-white flex items-center justify-between">
+              <div>
+                <h3 className="font-bold text-slate-900 text-sm group-hover:text-sky-600 transition truncate max-w-[200px]">
+                  {letter.name}
+                </h3>
+                <p className="text-xs text-slate-400 mt-0.5 font-medium">
+                  edited {letter.updatedAt || letter.createdAt || 'recently'} • A4
+                </p>
               </div>
 
-              {/* Card Meta & Actions */}
-              <div className="p-5 flex flex-col space-y-3">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="font-bold text-slate-800 text-base group-hover:text-sky-600 transition truncate max-w-[200px]">
-                      {letter.name}
-                    </h3>
-                    <p className="text-xs text-slate-400 mt-0.5">
-                      Target: <span className="font-semibold text-slate-600">{letter.recipient?.company || 'General'}</span>
-                    </p>
-                  </div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-sky-50 text-sky-700 border border-sky-100">
-                    {(letter.template || 'modern_blue').replace('_', ' ')}
-                  </span>
-                </div>
+              {/* 3-Dots Action Menu Button */}
+              <div className="relative" onClick={(e) => e.stopPropagation()}>
+                <button
+                  onClick={() => setActiveMenuId(activeMenuId === letter.id ? null : letter.id)}
+                  className="p-2 hover:bg-slate-100 rounded-xl text-slate-500 hover:text-slate-800 transition"
+                >
+                  <MoreVertical className="w-5 h-5" />
+                </button>
 
-                <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
-                  <span>Updated {letter.updatedAt || letter.createdAt || 'Recently'}</span>
-                  <div className="flex items-center space-x-1" onClick={(e) => e.stopPropagation()}>
+                {/* Dropdown Menu */}
+                {activeMenuId === letter.id && (
+                  <div className="absolute right-0 bottom-10 w-44 bg-white rounded-2xl shadow-xl border border-slate-200 py-1.5 z-30 animate-in fade-in zoom-in duration-100">
+                    <button
+                      onClick={() => {
+                        setActiveMenuId(null);
+                        handleOpenLetter(letter.id);
+                      }}
+                      className="w-full text-left px-4 py-2 hover:bg-slate-50 text-xs font-semibold text-slate-700 flex items-center gap-2"
+                    >
+                      <Edit3 className="w-3.5 h-3.5 text-sky-600" /> Open Editor
+                    </button>
                     <button
                       onClick={(e) => openRenameModal(letter, e)}
-                      title="Rename"
-                      className="p-1.5 hover:bg-slate-100 rounded text-slate-600 font-medium"
+                      className="w-full text-left px-4 py-2 hover:bg-slate-50 text-xs font-semibold text-slate-700 flex items-center gap-2"
                     >
-                      ✏️
+                      <FileText className="w-3.5 h-3.5 text-slate-500" /> Rename
                     </button>
                     <button
                       onClick={(e) => handleDuplicate(letter, e)}
-                      title="Duplicate"
-                      className="p-1.5 hover:bg-slate-100 rounded text-slate-600 font-medium"
+                      className="w-full text-left px-4 py-2 hover:bg-slate-50 text-xs font-semibold text-slate-700 flex items-center gap-2"
                     >
-                      📋
+                      <Copy className="w-3.5 h-3.5 text-slate-500" /> Duplicate
                     </button>
                     <button
-                      onClick={(e) => handleDelete(letter.id, e)}
-                      title="Delete"
-                      className="p-1.5 hover:bg-red-50 rounded text-red-600 font-medium"
+                      onClick={(e) => {
+                        setActiveMenuId(null);
+                        exportToPDF('cover-letter-preview', `${letter.name}.pdf`);
+                      }}
+                      className="w-full text-left px-4 py-2 hover:bg-slate-50 text-xs font-semibold text-slate-700 flex items-center gap-2"
                     >
-                      🗑️
+                      <Download className="w-3.5 h-3.5 text-emerald-600" /> Download PDF
+                    </button>
+                    <div className="my-1 border-t border-slate-100" />
+                    <button
+                      onClick={(e) => handleDelete(letter.id, e)}
+                      className="w-full text-left px-4 py-2 hover:bg-red-50 text-xs font-semibold text-red-600 flex items-center gap-2"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" /> Delete
                     </button>
                   </div>
-                </div>
+                )}
               </div>
             </div>
-          ))}
-        </div>
-      )}
+          </div>
+        ))}
 
-      {/* CREATE NEW MODAL WITH COLOR TEMPLATE PICKER */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-xl max-w-lg w-full p-6 space-y-5 max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center border-b pb-3">
-              <h3 className="text-lg font-bold text-slate-800">Create New Cover Letter</h3>
-              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600 font-bold">
-                ✕
-              </button>
+      </div>
+
+      {/* Modal: Rename Cover Letter */}
+      {isRenameModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border border-slate-100 space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b">
+              <h3 className="font-bold text-slate-900 text-sm">Rename Cover Letter</h3>
+              <button onClick={() => setIsRenameModalOpen(false)} className="text-slate-400 font-bold">✕</button>
             </div>
-            <form onSubmit={handleCreateNew} className="space-y-5">
-              <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">
-                  Cover Letter Name / Target Position
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. Software Engineer - Meta"
-                  value={newLetterName}
-                  onChange={(e) => setNewLetterName(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm"
-                  autoFocus
-                  required
-                />
-              </div>
-
-              {/* Template Color Selection Grid */}
-              <div className="space-y-2">
-                <label className="block text-xs font-bold text-slate-700">
-                  Select Cover Letter Template Theme
-                </label>
-                <div className="grid grid-cols-2 gap-2.5">
-                  {TEMPLATE_OPTIONS.map((tmpl) => {
-                    const isSelected = selectedTemplate === tmpl.id;
-                    return (
-                      <div
-                        key={tmpl.id}
-                        onClick={() => setSelectedTemplate(tmpl.id)}
-                        className={`p-3 rounded-xl border-2 cursor-pointer transition flex items-center space-x-3 ${
-                          isSelected
-                            ? 'border-sky-600 bg-sky-50/60 shadow-sm'
-                            : 'border-slate-200 hover:border-slate-300 bg-white'
-                        }`}
-                      >
-                        <div className={`w-6 h-6 rounded-full ${tmpl.colorBg} shrink-0 shadow-inner`} />
-                        <div className="overflow-hidden text-left">
-                          <p className="font-bold text-xs text-slate-800 truncate">{tmpl.name}</p>
-                          <p className="text-[10px] text-slate-500 truncate">{tmpl.desc}</p>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div className="flex justify-end gap-3 pt-3 border-t">
+            <form onSubmit={handleRenameSubmit} className="space-y-4">
+              <input
+                type="text"
+                value={renameValue}
+                onChange={(e) => setRenameValue(e.target.value)}
+                className="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-sky-500 font-bold"
+                required
+                autoFocus
+              />
+              <div className="flex justify-end gap-2">
                 <button
                   type="button"
-                  onClick={() => setIsModalOpen(false)}
+                  onClick={() => setIsRenameModalOpen(false)}
                   className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl"
                 >
                   Cancel
@@ -287,7 +217,7 @@ export default function MyCoverLetters({ onNavigate, onEditLetter }) {
                   type="submit"
                   className="px-5 py-2 text-xs font-semibold text-white bg-sky-600 hover:bg-sky-700 rounded-xl shadow"
                 >
-                  Create Cover Letter
+                  Save
                 </button>
               </div>
             </form>
@@ -295,46 +225,6 @@ export default function MyCoverLetters({ onNavigate, onEditLetter }) {
         </div>
       )}
 
-      {/* RENAME MODAL */}
-      {renameModalOpen && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-5">
-            <div className="flex justify-between items-center border-b pb-3">
-              <h3 className="text-lg font-bold text-slate-800">Rename Cover Letter</h3>
-              <button onClick={() => setRenameModalOpen(false)} className="text-slate-400 hover:text-slate-600 font-bold">
-                ✕
-              </button>
-            </div>
-            <form onSubmit={handleRename} className="space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Cover Letter Name</label>
-                <input
-                  type="text"
-                  value={newLetterName}
-                  onChange={(e) => setNewLetterName(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm"
-                  required
-                />
-              </div>
-              <div className="flex justify-end gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setRenameModalOpen(false)}
-                  className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 text-xs font-semibold text-white bg-sky-600 hover:bg-sky-700 rounded-xl shadow"
-                >
-                  Save Changes
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
