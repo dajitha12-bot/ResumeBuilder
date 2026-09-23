@@ -90,9 +90,21 @@ export default function ResumePreview({ resume, template = 'classic_serif', zoom
     );
   };
 
-  // TEMPLATE: TWO COLUMN COMPACT & CORAL MODERN (Sidebar Layout)
-  if (currentTemplate === 'two_column' || currentTemplate === 'coral_modern') {
+  // TEMPLATES: SIDEBAR LAYOUTS (Sage Green, Hunter Green, Lara Müller, Two-Column, Coral Modern)
+  if (['two_column', 'coral_modern', 'sage_green', 'hunter_green', 'lara_miller'].includes(currentTemplate)) {
     const isCoral = currentTemplate === 'coral_modern';
+    const isSage = currentTemplate === 'sage_green';
+    const isHunter = currentTemplate === 'hunter_green';
+    const isLara = currentTemplate === 'lara_miller';
+
+    let sidebarBg = 'bg-slate-50 border-slate-200 text-slate-800';
+    let textColor = 'text-sky-700';
+
+    if (isCoral) { sidebarBg = 'bg-rose-50/50 border-rose-200 text-rose-900'; textColor = 'text-rose-600'; }
+    if (isSage) { sidebarBg = 'bg-[#e5ebe7] border-[#c3d1c8] text-[#1c3328]'; textColor = 'text-[#2e5241]'; }
+    if (isHunter) { sidebarBg = 'bg-[#1c3328] border-[#2b4c3f] text-white'; textColor = 'text-emerald-300'; }
+    if (isLara) { sidebarBg = 'bg-[#7a456c] border-[#8a527c] text-white'; textColor = 'text-purple-200'; }
+
     return (
       <div className="w-full overflow-auto flex justify-center py-4 bg-slate-200/80 min-h-screen">
         <div 
@@ -101,11 +113,11 @@ export default function ResumePreview({ resume, template = 'classic_serif', zoom
           className="bg-white shadow-2xl rounded-sm text-slate-800 w-[794px] min-h-[1123px] grid grid-cols-12 text-[10.5px] leading-relaxed text-left"
         >
           {/* Left Column (4 cols) */}
-          <div className={`col-span-4 p-5 border-r space-y-4 ${isCoral ? 'bg-rose-50/50 border-rose-200' : 'bg-slate-50 border-slate-200'}`}>
+          <div className={`col-span-4 p-5 border-r space-y-4 ${sidebarBg}`}>
             <div className="flex flex-col items-center text-center space-y-2">
               {renderPhotoFrame("w-24 h-24", "rounded-full")}
-              <h1 className="font-bold text-base text-slate-900 leading-tight">{personalInfo.fullName || 'Ajitha D R'}</h1>
-              <p className={`text-xs italic font-medium ${isCoral ? 'text-rose-600' : 'text-sky-700'}`}>
+              <h1 className={`font-bold text-base leading-tight ${isHunter || isLara ? 'text-white' : 'text-slate-900'}`}>{personalInfo.fullName || 'Ajitha D R'}</h1>
+              <p className={`text-xs italic font-medium ${textColor}`}>
                 {personalInfo.subtitle || resume.targetRole}
               </p>
             </div>
@@ -178,6 +190,83 @@ export default function ResumePreview({ resume, template = 'classic_serif', zoom
                 </div>
               </div>
             )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // TEMPLATES: BANNER HEADER LAYOUTS (Atlantic Standard, Atlantic Crest, Cobalt Edge, Slate Focus, Confident Grid, Quicksilver)
+  if (['atlantic_standard', 'atlantic_crest', 'cobalt_edge', 'slate_focus', 'confident_grid', 'quicksilver'].includes(currentTemplate)) {
+    const isAtlantic = currentTemplate === 'atlantic_standard';
+    const isCrest = currentTemplate === 'atlantic_crest';
+    const isCobalt = currentTemplate === 'cobalt_edge';
+
+    let bannerBg = 'bg-[#1e293b] text-white';
+    if (isCrest) bannerBg = 'bg-[#003366] text-white';
+    if (isCobalt) bannerBg = 'bg-[#1e40af] text-white';
+    if (currentTemplate === 'slate_focus') bannerBg = 'bg-[#334155] text-white';
+    if (currentTemplate === 'confident_grid' || currentTemplate === 'quicksilver') bannerBg = 'bg-slate-100 text-slate-900 border-b border-slate-300';
+
+    return (
+      <div className="w-full overflow-auto flex justify-center py-4 bg-slate-200/80 min-h-screen">
+        <div 
+          id="resume-printable-area"
+          style={{ transform: `scale(${zoomScale})`, transformOrigin: 'top center', padding: options.margins || '0.4in' }}
+          className="bg-white shadow-2xl rounded-sm text-slate-800 w-[794px] min-h-[1123px] text-[10.5px] leading-relaxed text-left flex flex-col justify-between"
+        >
+          <div>
+            {/* Top Banner */}
+            <div className={`${bannerBg} p-8 flex justify-between items-center mb-6`}>
+              <div>
+                <h1 className={`text-2xl font-extrabold tracking-tight ${bannerBg.includes('text-white') ? 'text-white' : 'text-slate-900'}`}>{personalInfo.fullName || 'Ajitha D R'}</h1>
+                <p className={`text-xs font-semibold uppercase tracking-widest mt-1 ${bannerBg.includes('text-white') ? 'text-sky-200' : 'text-sky-700'}`}>{personalInfo.subtitle || resume.targetRole}</p>
+                <div className={`flex flex-wrap gap-x-4 gap-y-1 text-[10px] mt-3 ${bannerBg.includes('text-white') ? 'text-slate-300' : 'text-slate-600'}`}>
+                  {personalInfo.email && <span>✉ {personalInfo.email}</span>}
+                  {personalInfo.phone && <span>📞 {personalInfo.phone}</span>}
+                  {personalInfo.location && <span>📍 {personalInfo.location}</span>}
+                </div>
+              </div>
+              {renderPhotoFrame("w-20 h-20", "rounded-full", "border-2 border-white/80")}
+            </div>
+
+            <div className="px-8 space-y-5">
+              {summary && (
+                <div>
+                  {renderSectionTitle('Summary')}
+                  <p className="text-slate-700 leading-relaxed text-justify">{summary}</p>
+                </div>
+              )}
+
+              {/* Education */}
+              {education.length > 0 && (
+                <div>
+                  {renderSectionTitle('Education')}
+                  <div className="space-y-2">
+                    {education.map((edu, i) => (
+                      <div key={i} className="flex justify-between items-start">
+                        <div>
+                          <h3 className="font-bold text-slate-900 text-[11px]">{edu.degree}</h3>
+                          <p className="text-slate-600 italic text-[10px]">{edu.institution}</p>
+                        </div>
+                        <span className="text-[9.5px] font-semibold text-slate-500">{edu.year}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Skills */}
+              {skills && (
+                <div>
+                  {renderSectionTitle('Technical Skills')}
+                  <div className="grid grid-cols-2 gap-4 text-[10.5px]">
+                    {skills.languages?.length > 0 && <div><strong className="block text-slate-900 font-bold">Programming Languages:</strong> {skills.languages.join(', ')}</div>}
+                    {skills.frameworks?.length > 0 && <div><strong className="block text-slate-900 font-bold">Frameworks & Tools:</strong> {skills.frameworks.join(', ')}</div>}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
