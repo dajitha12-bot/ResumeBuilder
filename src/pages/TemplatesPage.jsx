@@ -153,7 +153,41 @@ export default function TemplatesPage({ resume, setResume, onNavigate, onEditCov
   ];
 
   const handleApplyResume = (templateId) => {
-    if (setResume) setResume(prev => ({ ...prev, template: templateId }));
+    const newEmptyResume = {
+      id: `ver_${Date.now()}`,
+      name: 'New Resume',
+      title: 'New Resume',
+      targetRole: 'Software Engineer',
+      template: templateId,
+      createdAt: new Date().toISOString().split('T')[0],
+      personalInfo: {
+        fullName: '',
+        subtitle: '',
+        email: '',
+        phone: '',
+        location: '',
+        linkedin: '',
+        github: '',
+        portfolio: '',
+        avatarUrl: ''
+      },
+      summary: '',
+      education: [],
+      skills: {
+        languages: [],
+        frameworks: [],
+        databases: []
+      },
+      projects: [],
+      experience: [],
+      certifications: [],
+      achievements: [],
+      interests: [],
+      positions: [],
+      languages: [],
+      links: []
+    };
+    if (setResume) setResume(newEmptyResume);
     if (onNavigate) onNavigate('builder');
   };
 

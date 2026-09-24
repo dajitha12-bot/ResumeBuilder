@@ -399,15 +399,82 @@ export default function ResumePreview({ resume, template = 'classic_serif', zoom
             </div>
           )}
 
-          {/* Certifications & Achievements */}
+          {/* Certifications */}
           {certifications.length > 0 && (
             <div>
               {renderSectionTitle('Certifications')}
               <div className="space-y-1 text-[10px]">
                 {certifications.map((c, idx) => (
                   <div key={idx} className="flex justify-between">
-                    <span className="font-semibold text-slate-800">• {c.title} — {c.issuer}</span>
+                    <span className="font-semibold text-slate-800">• {c.title} {c.issuer ? `— ${c.issuer}` : ''}</span>
                     <span className="text-slate-500">{c.year}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Achievements & Awards */}
+          {achievements.length > 0 && (
+            <div>
+              {renderSectionTitle('Achievements & Awards')}
+              <div className="space-y-1 text-[10px]">
+                {achievements.map((a, idx) => (
+                  <div key={idx} className="flex justify-between">
+                    <span className="font-semibold text-slate-800">• {a.title} {a.organization ? `(${a.organization})` : ''}</span>
+                    <span className="text-slate-500">{a.year}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Areas of Interest */}
+          {(Array.isArray(interests) ? interests.length > 0 : Boolean(interests)) && (
+            <div>
+              {renderSectionTitle('Areas of Interest')}
+              <p className="text-slate-700 text-[10px]">
+                {Array.isArray(interests) ? interests.join(', ') : interests}
+              </p>
+            </div>
+          )}
+
+          {/* Positions of Responsibility */}
+          {positions.length > 0 && (
+            <div>
+              {renderSectionTitle('Positions of Responsibility')}
+              <div className="space-y-1.5 text-[10px]">
+                {positions.map((p, idx) => (
+                  <div key={idx} className="flex justify-between items-baseline">
+                    <div>
+                      <span className="font-bold text-slate-900">{p.role}</span>
+                      {p.organization && <span className="text-slate-600 italic"> — {p.organization}</span>}
+                    </div>
+                    <span className="text-slate-500 text-[9.5px]">{p.duration}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Languages Known */}
+          {(Array.isArray(languages) ? languages.length > 0 : Boolean(languages)) && (
+            <div>
+              {renderSectionTitle('Languages Known')}
+              <p className="text-slate-700 text-[10px]">
+                {Array.isArray(languages) ? languages.join(', ') : languages}
+              </p>
+            </div>
+          )}
+
+          {/* Links & Profiles */}
+          {links.length > 0 && (
+            <div>
+              {renderSectionTitle('Profiles & Links')}
+              <div className="flex flex-wrap gap-x-4 gap-y-1 text-[10px]">
+                {links.map((l, idx) => (
+                  <div key={idx} className="font-medium text-sky-700">
+                    🔗 <strong>{l.platform}:</strong> {l.url}
                   </div>
                 ))}
               </div>
