@@ -4,20 +4,19 @@ import { Mail, Phone, MapPin, Linkedin, Github, Globe, Calendar, Camera } from '
 export default function ResumePreview({ resume, template = 'classic_serif', zoom = 100, onePage = true, customizeOptions }) {
   if (!resume) return <div className="p-8 text-center text-slate-400">No resume data loaded</div>;
 
-  const {
-    personalInfo = {},
-    summary,
-    education = [],
-    skills = {},
-    areasOfInterest = [],
-    projects = [],
-    experience = [],
-    certifications = [],
-    achievements = [],
-    positions = [],
-    languages = [],
-    links = []
-  } = resume;
+  const safeResume = resume || {};
+  const personalInfo = safeResume.personalInfo || {};
+  const summary = safeResume.summary || '';
+  const education = Array.isArray(safeResume.education) ? safeResume.education : [];
+  const skills = safeResume.skills || {};
+  const projects = Array.isArray(safeResume.projects) ? safeResume.projects : [];
+  const experience = Array.isArray(safeResume.experience) ? safeResume.experience : [];
+  const certifications = Array.isArray(safeResume.certifications) ? safeResume.certifications : [];
+  const achievements = Array.isArray(safeResume.achievements) ? safeResume.achievements : [];
+  const interests = safeResume.interests || safeResume.areasOfInterest || [];
+  const positions = Array.isArray(safeResume.positions) ? safeResume.positions : [];
+  const languages = safeResume.languages || [];
+  const links = Array.isArray(safeResume.links) ? safeResume.links : [];
 
   const options = customizeOptions || {
     fontFamily: 'Georgia, Cambria, serif',
