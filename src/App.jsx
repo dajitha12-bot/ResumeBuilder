@@ -10,11 +10,46 @@ import AICareerAssistant from './pages/AICareerAssistant';
 import { api } from './services/api';
 import { Menu, Sparkles } from 'lucide-react';
 
+const DEFAULT_RESUME = {
+  id: 'resume_001',
+  title: 'Software Developer Resume',
+  targetRole: 'Software Engineer',
+  template: 'classic_serif',
+  personalInfo: {
+    fullName: 'Ajitha D R',
+    subtitle: 'B.Tech – Information Technology',
+    email: 'dajitha12@gmail.com',
+    phone: '6374784776',
+    location: 'Aruppukottai, Virudhunagar District, Tamil Nadu',
+    linkedin: 'linkedin.com/in/ajitha-d-r-b3697b323',
+    github: 'https://github.com/dajitha12-bot',
+    portfolio: ''
+  },
+  summary: 'Motivated B.Tech IT student with strong skills in React, Java, and REST API development. Eager to contribute to software engineering initiatives.',
+  education: [
+    { degree: 'B.Tech – Information Technology', institution: 'National Engineering College', year: '2024 – 2028', details: 'CGPA: 8.7' }
+  ],
+  skills: {
+    languages: ['Java', 'JavaScript', 'React', 'SQL', 'C++'],
+    frameworks: ['Spring Boot', 'Node.js', 'Tailwind CSS']
+  },
+  projects: [
+    { name: 'AI Resume Builder', duration: '2026', description: 'Interactive AI resume & cover letter builder with FlowCV engine.' }
+  ],
+  experience: [],
+  certifications: [],
+  achievements: [],
+  interests: ['Full Stack Web Development', 'Cloud Computing', 'Open Source'],
+  positions: [],
+  languages: ['English (Fluent)', 'Tamil (Native)'],
+  links: []
+};
+
 export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [templateType, setTemplateType] = useState('resumes');
   const [user, setUser] = useState(null);
-  const [resume, setResume] = useState(null);
+  const [resume, setResume] = useState(DEFAULT_RESUME);
   const [vaultItems, setVaultItems] = useState([]);
   const [versions, setVersions] = useState([]);
   const [selectedCoverLetterId, setSelectedCoverLetterId] = useState(null);
@@ -36,7 +71,11 @@ export default function App() {
         setUser(u);
 
         const rList = await api.getResumes('user_001');
-        if (rList?.length) setResume(rList[0]);
+        if (rList?.length) {
+          setResume(rList[0]);
+        } else {
+          setResume(DEFAULT_RESUME);
+        }
 
         const vList = await api.getCareerVault('user_001');
         setVaultItems(vList);
@@ -154,6 +193,7 @@ export default function App() {
               truthStatus={truthStatus}
               versions={versions}
               setVersions={setVersions}
+              onNavigate={handleNavigate}
               onRefreshTruth={() => api.verifyClaims('user_001', resume).then(setTruthStatus)}
             />
           )}
@@ -161,6 +201,7 @@ export default function App() {
           {activeTab === 'assistant' && (
             <AICareerAssistant
               resume={resume}
+              onNavigate={handleNavigate}
             />
           )}
         </main>
